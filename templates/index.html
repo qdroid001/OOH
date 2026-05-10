@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AB Campaign Manager (ABCM)</title>
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --primary-light: #60a5fa;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --gray-light: #e2e8f0;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--dark);
+    }
+
+    .main-container {
+      display: flex;
+      width: 900px;
+      max-width: 95%;
+      height: 550px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .welcome-section {
+      flex: 1;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-section::before {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      top: -50px;
+      left: -50px;
+    }
+
+    .welcome-section::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      bottom: -50px;
+      right: -50px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .welcome-subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feature-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .feature-text {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .form-section {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: var(--dark);
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--gray-light);
+      font-size: 15px;
+      transition: all 0.3s;
+      background: white;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-company {
+      margin-top: 12px;
+      background: white;
+      color: var(--primary-dark);
+      border: 1px solid var(--primary-light);
+    }
+
+    .btn-company:hover {
+      background: #eff6ff;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Popup Styles */
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-overlay.active {
+      display: flex;
+    }
+
+    .popup {
+      background: white;
+      border-radius: 20px;
+      width: 450px;
+      max-width: 90%;
+      max-height: 90vh;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: popupIn 0.3s ease-out;
+    }
+
+    @keyframes popupIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 30px 0;
+      margin-bottom: 20px;
+    }
+
+    .popup-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .popup-close {
+      cursor: pointer;
+      color: var(--gray);
+      font-size: 24px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .popup-close:hover {
+      background: var(--gray-light);
+      color: var(--dark);
+    }
+
+    .popup-body {
+      padding: 0 30px 30px;
+      max-height: calc(90vh - 82px);
+      overflow-y: auto;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .welcome-section {
+        padding: 30px;
+      }
+      
+      .form-section {
+        padding: 30px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="main-container">
+    <div class="welcome-section">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-bullhorn"></i>
+        </div>
+        <div class="logo-text">ABCM</div>
+      </div>
+      <h1 class="welcome-title">Welcome to AB Campaign Manager</h1>
+      <p class="welcome-subtitle">Streamline your advertising campaigns with our powerful management platform. Create, track, and optimize your marketing efforts in one place.</p>
+      
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div class="feature-text">Launch campaigns in minutes</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="feature-text">Track performance with real-time analytics</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="feature-text">Collaborate with your team seamlessly</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h2 class="form-title">Sign In to Your Account</h2>
+      
+      <div class="form-group">
+        <label for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" placeholder="Enter your email">
+      </div>
+      
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password">
+      </div>
+      
+      <button class="btn btn-primary" onclick="login()">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Sign In</span>
+      </button>
+
+      <button class="btn btn-company" onclick="companyLogin()">
+        <i class="fas fa-building"></i>
+        <span>Company Login</span>
+      </button>
+      
+      <div class="link">
+        Don't have an account? <a onclick="openPopup()">Create Account</a>
+      </div>
+
+      <div class="link" style="margin-top: 10px;">
+        Register a company? <a onclick="openCompanyPopup()">Company Registration</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Popup -->
+  <div class="popup-overlay" id="register-popup">
+    <div class="popup">
+      <div class="popup-header">
+        <h3 class="popup-title">Create Account</h3>
+        <div class="popup-close" onclick="closePopup()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      
+      <div class="popup-body">
+        <div class="form-group">
+          <label for="regUsername">Username</label>
+          <input type="text" id="regUsername" placeholder="Choose a username">
+        </div>
+        
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" placeholder="Enter your email">
+        </div>
+        
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" placeholder="Create a password">
+        </div>
+        
+        <div class="form-group">
+          <label for="regRole">Account Type</label>
+          <select id="regRole" onchange="checkRole()">
+            <option value="client">Client</option>
+            <option value="staff">Staff</option>
+          </select>
+        </div>
+        
+        <div class="form-group" id="key-field" style="display:none;">
+          <label for="regKey">Company Staff Key</label>
+          <input type="text" id="regKey" placeholder="Enter company staff key">
+        </div>
+        
+        <button class="btn btn-primary" onclick="register()">
+          <i class="fas fa-user-plus"></i>
+          <span>Create Account</span>
+        </button>
+        
+        <div class="link" style="margin-top: 15px;">
+          Already have an account? <a onclick="closePopup()">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Registration Popup -->
+  <div class="popup-overlay" id="company-register-popup">
+    <div class="popup">
+      <div class="popup-header">
+        <h3 class="popup-title">Company Registration</h3>
+        <div class="popup-close" onclick="closeCompanyPopup()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      
+      <div class="popup-body">
+        <div class="form-group">
+          <label for="companyName">Company Name</label>
+          <input type="text" id="companyName" placeholder="Enter company name">
+        </div>
+        
+        <div class="form-group">
+          <label for="companyEmail">Company Email</label>
+          <input type="email" id="companyEmail" placeholder="Enter company email">
+        </div>
+
+        <div class="form-group">
+          <label for="companyLogo">Company Logo</label>
+          <input type="file" id="companyLogo" accept="image/png,image/jpeg,image/gif,image/webp">
+        </div>
+
+        <div class="form-group">
+          <label for="companyAddress">Company Address</label>
+          <input type="text" id="companyAddress" placeholder="Enter company address">
+        </div>
+
+        <div class="form-group">
+          <label for="companyHotline">Company Hotline</label>
+          <input type="tel" id="companyHotline" placeholder="Enter company hotline">
+        </div>
+        
+        <div class="form-group">
+          <label for="companyPassword">Password</label>
+          <input type="password" id="companyPassword" placeholder="Create a password">
+        </div>
+        
+        <button class="btn btn-primary" onclick="registerCompany()">
+          <i class="fas fa-building"></i>
+          <span>Register Company</span>
+        </button>
+        
+        <div class="link" style="margin-top: 15px;">
+          Already registered? <a onclick="closeCompanyPopup()">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://127.0.0.1:5000";
+
+    function openPopup(){
+      document.getElementById('register-popup').classList.add('active');
+    }
+
+    function closePopup(){
+      document.getElementById('register-popup').classList.remove('active');
+    }
+
+    function openCompanyPopup(){
+      document.getElementById('company-register-popup').classList.add('active');
+    }
+
+    function closeCompanyPopup(){
+      document.getElementById('company-register-popup').classList.remove('active');
+    }
+
+    function checkRole(){
+      const role = document.getElementById('regRole').value;
+      document.getElementById('key-field').style.display =
+        role === 'staff' ? 'block' : 'none';
+    }
+
+    // Register Function
+    async function register(){
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const role = document.getElementById('regRole').value;
+      const key = document.getElementById('regKey').value.trim();
+
+      if (!username || !email || !password) {
+        alert("Please fill all required fields!");
+        return;
+      }
+
+      if (role === 'staff' && !key) {
+        alert("Company staff key is required for staff accounts!");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/register`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ username, email, password, role, key })
+        });
+
+        const data = await res.json();
+        alert(data.message || data.error);
+
+        if (!data.error) {
+          closePopup();
+          // Clear form
+          document.getElementById('regUsername').value = '';
+          document.getElementById('regEmail').value = '';
+          document.getElementById('regPassword').value = '';
+          document.getElementById('regKey').value = '';
+        }
+      } catch (err) {
+        alert("Error connecting to server. Make sure Flask is running.");
+      }
+    }
+
+    // Company Register Function
+    async function registerCompany(){
+      const username = document.getElementById('companyName').value.trim();
+      const email = document.getElementById('companyEmail').value.trim();
+      const logo = document.getElementById('companyLogo').files[0];
+      const company_address = document.getElementById('companyAddress').value.trim();
+      const company_hotline = document.getElementById('companyHotline').value.trim();
+      const password = document.getElementById('companyPassword').value.trim();
+      const role = 'company';
+
+      if (!username || !email || !company_address || !company_hotline || !password) {
+        alert("Please fill all company registration fields!");
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("role", role);
+        formData.append("company_address", company_address);
+        formData.append("company_hotline", company_hotline);
+        if (logo) formData.append("company_logo", logo);
+
+        const res = await fetch(`${API_URL}/register`, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+        alert(data.message || data.error);
+
+        if (!data.error) {
+          closeCompanyPopup();
+          document.getElementById('companyName').value = '';
+          document.getElementById('companyEmail').value = '';
+          document.getElementById('companyLogo').value = '';
+          document.getElementById('companyAddress').value = '';
+          document.getElementById('companyHotline').value = '';
+          document.getElementById('companyPassword').value = '';
+        }
+      } catch (err) {
+        alert("Error connecting to server. Make sure Flask is running.");
+      }
+    }
+
+    // Login Function
+    async function login(){
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      if (!email || !password) {
+        alert("Please enter both email and password!");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/login`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        // Store user info locally
+        localStorage.setItem("user_id", data.id);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("company_logo", data.company_logo || "");
+        localStorage.setItem("company_address", data.company_address || "");
+        localStorage.setItem("company_hotline", data.company_hotline || "");
+        localStorage.setItem("company_id", data.company_id || "");
+        localStorage.setItem("staff_registration_key", data.staff_registration_key || "");
+        localStorage.setItem("is_prime_staff", data.is_prime_staff || 0);
+
+        alert(`Welcome ${data.username}!`);
+
+        // Redirect based on role
+        if (data.role === "company") window.location.href = "company.html";
+        else if (data.role === "staff") window.location.href = "staff.html";
+        else window.location.href = "client.html";
+
+      } catch (err) {
+        alert("Cannot connect to server. Make sure Flask is running.");
+      }
+    }
+
+    // Company Login Function
+    async function companyLogin(){
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      if (!email || !password) {
+        alert("Please enter both email and password!");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/company-login`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        localStorage.setItem("user_id", data.id);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("company_logo", data.company_logo || "");
+        localStorage.setItem("company_address", data.company_address || "");
+        localStorage.setItem("company_hotline", data.company_hotline || "");
+        localStorage.setItem("company_id", data.company_id || "");
+        localStorage.setItem("staff_registration_key", data.staff_registration_key || "");
+        localStorage.setItem("is_prime_staff", data.is_prime_staff || 0);
+
+        alert(`Welcome ${data.username}!`);
+        window.location.href = "company.html";
+
+      } catch (err) {
+        alert("Cannot connect to server. Make sure Flask is running.");
+      }
+    }
+
+    // Allow pressing Enter to submit forms
+    document.addEventListener('DOMContentLoaded', function() {
+      // Login form
+      document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          login();
+        }
+      });
+      
+      // Registration form
+      
+      document.getElementById('regPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          register();
+        }
+      });
+      
+      document.getElementById('regKey').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          register();
+          
+        }
+      });
+
+      document.getElementById('companyPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          registerCompany();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

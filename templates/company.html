@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Company Dashboard - ABC-M</title>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-dark: #020617;
+      --primary-light: #1e293b;
+      --secondary: #dc2626;
+      --accent: #059669;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --gray-light: #e2e8f0;
+      --sidebar-width: 280px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: var(--light);
+      line-height: 1.6;
+    }
+    
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 0;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+    
+    .sidebar-header {
+      padding: 0 25px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--danger) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    .sidebar-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .company-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      margin: 20px;
+      border-radius: 12px;
+    }
+    
+    .company-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, #10b981 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .company-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    
+    .company-details h3 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    
+    .company-details p {
+      font-size: 13px;
+      opacity: 0.7;
+      overflow-wrap: anywhere;
+    }
+    
+    .company-role {
+      display: inline-block;
+      background: var(--secondary);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+    
+    .nav-links {
+      flex: 1;
+      padding: 20px 0;
+    }
+    
+    .sidebar a {
+      padding: 15px 25px;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+      margin: 5px 15px;
+      border-radius: 8px;
+    }
+    
+    .sidebar a i {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+      opacity: 0.8;
+    }
+    
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary);
+    }
+    
+    .sidebar a.active i {
+      opacity: 1;
+    }
+    
+    .logout-btn {
+      margin-top: auto;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .logout-btn button {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background 0.3s;
+      width: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .logout-btn button:hover {
+      background: #dc2626;
+    }
+    
+    .main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      background: var(--primary-dark);
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .header h1::before {
+      content: "👑";
+      font-size: 32px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .header-action-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    
+    .header-action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    
+    .total-campaigns .stat-icon {
+      background: rgba(220, 38, 38, 0.2);
+      color: var(--secondary);
+    }
+    
+    .pending .stat-icon {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+    }
+    
+    .active .stat-icon {
+      background: rgba(5, 150, 105, 0.2);
+      color: var(--accent);
+    }
+    
+    .staff-online .stat-icon {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+    }
+    
+    .stat-info h3 {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 5px;
+    }
+    
+    .stat-info p {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--light);
+    }
+    
+    .stat-change {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+    }
+    
+    .positive {
+      color: var(--success);
+    }
+    
+    .negative {
+      color: var(--danger);
+    }
+
+    .staff-key-panel {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .staff-key-info h3 {
+      font-size: 16px;
+      color: var(--light);
+      margin-bottom: 8px;
+    }
+
+    .staff-key-value {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--success);
+      font-weight: 700;
+      letter-spacing: 1px;
+      overflow-wrap: anywhere;
+    }
+
+    .staff-key-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 30px 0 20px;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .page-title::before {
+      content: "📊";
+    }
+    
+    .table-container {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: transparent;
+    }
+    
+    th, td {
+      padding: 15px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    th {
+      background: rgba(30, 41, 59, 0.9);
+      color: var(--light);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tr:hover {
+      background: rgba(220, 38, 38, 0.05);
+    }
+    
+    select, textarea, input[type="file"] {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--light);
+      font-size: 14px;
+      transition: all 0.3s;
+      min-width: 140px;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--secondary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+    }
+    
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    
+    .status-pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .status-accepted {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    
+    .status-processing {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    
+    .status-done {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .status-declined {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    /* About Page */
+    #about {
+      display: none;
+      font-size: 18px;
+      color: var(--light);
+    }
+
+    .profile-editor,
+    .prime-staff-panel,
+    .profile-preview {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      margin-top: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .profile-editor label,
+    .prime-staff-panel label {
+      display: block;
+      margin: 14px 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-light);
+    }
+    
+    #about h2,
+    .profile-editor h2,
+    .prime-staff-panel h2,
+    .profile-preview h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .profile-preview p {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      color: var(--gray-light);
+    }
+
+    .profile-media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .profile-media-grid img,
+    .profile-media-grid video {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.7);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 80px;
+        overflow: hidden;
+      }
+      
+      .sidebar-header h2,
+      .company-details,
+      .sidebar a span,
+      .logout-btn button span {
+        display: none;
+      }
+      
+      .sidebar a,
+      .logout-btn button {
+        justify-content: center;
+        padding: 15px;
+      }
+      
+      .company-info {
+        justify-content: center;
+        padding: 15px;
+      }
+      
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .stats-container {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .staff-key-panel {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .staff-key-actions {
+        width: 100%;
+      }
+
+      .staff-key-actions .header-action-btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .main {
+        padding: 15px;
+      }
+      
+      .header-actions {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">A</div>
+        <h2>Company Panel</h2>
+      </div>
+      
+      <div class="company-info">
+        <div class="company-avatar" id="companyAvatar">
+          <i class="fas fa-crown" id="companyAvatarIcon"></i>
+          <img id="companyLogo" alt="Company Logo">
+        </div>
+        <div class="company-details">
+          <h3 id="companyName">Company</h3>
+          <p id="companyEmail">company@abiokpublicity.com</p>
+          <p id="companyAddress"></p>
+          <p id="companyHotline"></p>
+          <div class="company-role">Company Account</div>
+        </div>
+      </div>
+      
+      <div class="nav-links">
+        <a href="#" class="active" id="dashboardLink">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" id="aboutLink">
+          <i class="fas fa-info-circle"></i>
+          <span>About</span>
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <button onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div id="dashboard">
+        <div class="header">
+          <h1>Advertisement Management System - Company Dashboard</h1>
+          <div class="header-actions">
+            <div class="header-action-btn" onclick="fetchAds()">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </div>
+            <div class="header-action-btn">
+              <i class="fas fa-download"></i>
+              <span>Export</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-container">
+          <div class="stat-card total-campaigns">
+            <div class="stat-icon">
+              <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Total Campaigns</h3>
+              <p id="total-campaigns">0</p>
+              <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>12% increase</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card pending">
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Pending Approval</h3>
+              <p id="pending-count">0</p>
+              <div class="stat-change negative">
+                <i class="fas fa-arrow-down"></i>
+                <span>5% decrease</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card active">
+            <div class="stat-icon">
+              <i class="fas fa-play-circle"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Active Campaigns</h3>
+              <p id="active-count">0</p>
+              <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>8% increase</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card staff-online">
+            <div class="stat-icon">
+              <i class="fas fa-user-check"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Staff Online</h3>
+              <p id="staff-online">0</p>
+              <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>3% increase</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="staff-key-panel">
+          <div class="staff-key-info">
+            <h3>Company Staff Registration Key</h3>
+            <div class="staff-key-value" id="staffRegistrationKey">No key generated yet</div>
+          </div>
+          <div class="staff-key-actions">
+            <button class="header-action-btn" onclick="generateStaffKey()">
+              <i class="fas fa-key"></i>
+              <span>Generate Key</span>
+            </button>
+            <button class="header-action-btn" onclick="copyStaffKey()">
+              <i class="fas fa-copy"></i>
+              <span>Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="page-title">Manage Advertisements</div>
+        
+        <div class="table-container">
+          <table id="ads-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Ad Type</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Staff Assigned</th>
+                <th>Assign Staff</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="about">
+        <div class="header">
+          <h1>Company Profile</h1>
+        </div>
+
+        <div class="prime-staff-panel">
+          <h2>Prime Staff Access</h2>
+          <label for="primeStaffSelect">Select staff who can edit this company profile</label>
+          <select id="primeStaffSelect" onchange="setPrimeStaff(this.value)">
+            <option value="">Select Staff</option>
+          </select>
+        </div>
+
+        <div class="profile-editor">
+          <h2>Edit About Company</h2>
+          <label for="companyAboutText">About Text</label>
+          <textarea id="companyAboutText" placeholder="Write about your company"></textarea>
+          <label for="companyMediaUpload">Images and Videos</label>
+          <input type="file" id="companyMediaUpload" accept="image/*,video/mp4,video/webm,video/quicktime" multiple>
+          <button class="header-action-btn" style="margin-top: 15px;" onclick="saveCompanyProfile()">
+            <i class="fas fa-save"></i>
+            <span>Save Profile</span>
+          </button>
+        </div>
+
+        <div class="profile-preview">
+          <h2 id="profileCompanyName">Company Information</h2>
+          <p id="profileAboutText">No company information added yet.</p>
+          <div class="profile-media-grid" id="profileMediaGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://127.0.0.1:5000";
+    let staffList = [];
+    let allAds = [];
+    const companyId = localStorage.getItem("user_id");
+
+    // Navigation functionality
+    document.getElementById('dashboardLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      showPage('dashboard');
+    });
+    
+    document.getElementById('aboutLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      showPage('about');
+    });
+
+    function showPage(pageId) {
+      document.getElementById('dashboard').style.display = pageId === 'dashboard' ? 'block' : 'none';
+      document.getElementById('about').style.display = pageId === 'about' ? 'block' : 'none';
+      
+      // Update active link
+      document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+      document.getElementById(pageId === 'dashboard' ? 'dashboardLink' : 'aboutLink').classList.add('active');
+    }
+
+    function loadCompanyProfile() {
+      const username = localStorage.getItem("username") || "Company";
+      const email = localStorage.getItem("email") || "company@abiokpublicity.com";
+      const address = localStorage.getItem("company_address") || "";
+      const hotline = localStorage.getItem("company_hotline") || "";
+      const logo = localStorage.getItem("company_logo") || "";
+      const staffKey = localStorage.getItem("staff_registration_key") || "";
+
+      document.getElementById("companyName").textContent = username;
+      document.getElementById("companyEmail").textContent = email;
+      document.getElementById("companyAddress").textContent = address;
+      document.getElementById("companyHotline").textContent = hotline ? `Hotline: ${hotline}` : "";
+      document.getElementById("staffRegistrationKey").textContent = staffKey || "No key generated yet";
+
+      if (logo) {
+        const logoImg = document.getElementById("companyLogo");
+        logoImg.src = logo;
+        logoImg.style.display = "block";
+        document.getElementById("companyAvatarIcon").style.display = "none";
+      }
+    }
+
+    async function generateStaffKey() {
+      if (!companyId) {
+        alert("Please log in as a company first.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/generate-staff-key`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ company_id: parseInt(companyId) })
+        });
+
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        localStorage.setItem("staff_registration_key", data.staff_registration_key);
+        document.getElementById("staffRegistrationKey").textContent = data.staff_registration_key;
+        alert("Company staff key generated successfully.");
+      } catch (error) {
+        alert("Error generating company staff key.");
+      }
+    }
+
+    async function copyStaffKey() {
+      const staffKey = localStorage.getItem("staff_registration_key") || "";
+      if (!staffKey) {
+        alert("Generate a staff key first.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(staffKey);
+        alert("Staff key copied.");
+      } catch (error) {
+        alert(`Staff key: ${staffKey}`);
+      }
+    }
+
+    function renderCompanyProfile(profile) {
+      document.getElementById("profileCompanyName").textContent = profile.company_name || "Company Information";
+      document.getElementById("profileAboutText").textContent =
+        profile.company_about || "No company information added yet.";
+      document.getElementById("companyAboutText").value = profile.company_about || "";
+
+      const mediaGrid = document.getElementById("profileMediaGrid");
+      mediaGrid.innerHTML = "";
+
+      (profile.company_media || []).forEach(item => {
+        const media = document.createElement(item.type === "video" ? "video" : "img");
+        media.src = item.url;
+        if (item.type === "video") {
+          media.controls = true;
+        } else {
+          media.alt = item.name || "Company image";
+        }
+        mediaGrid.appendChild(media);
+      });
+    }
+
+    async function loadCompanyProfileContent() {
+      if (!companyId) return;
+
+      try {
+        const res = await fetch(`${API_URL}/company-profile/${companyId}?user_id=${encodeURIComponent(companyId)}`);
+        const profile = await res.json();
+        if (profile.error) {
+          console.error(profile.error);
+          return;
+        }
+
+        renderCompanyProfile(profile);
+      } catch (error) {
+        console.error("Error loading company profile:", error);
+      }
+    }
+
+    async function saveCompanyProfile() {
+      if (!companyId) {
+        alert("Please log in as a company first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("user_id", companyId);
+      formData.append("company_about", document.getElementById("companyAboutText").value.trim());
+
+      const mediaFiles = document.getElementById("companyMediaUpload").files;
+      Array.from(mediaFiles).forEach(file => formData.append("company_media", file));
+
+      try {
+        const res = await fetch(`${API_URL}/company-profile/${companyId}`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+
+        if (!data.error) {
+          document.getElementById("companyMediaUpload").value = "";
+          loadCompanyProfileContent();
+        }
+      } catch (error) {
+        alert("Error saving company profile.");
+      }
+    }
+
+    function renderPrimeStaffOptions() {
+      const select = document.getElementById("primeStaffSelect");
+      select.innerHTML = '<option value="">Select Staff</option>';
+
+      staffList.forEach(staff => {
+        const option = document.createElement("option");
+        option.value = staff.username;
+        option.textContent = staff.is_prime_staff ? `${staff.username} (Prime)` : staff.username;
+        select.appendChild(option);
+      });
+    }
+
+    async function setPrimeStaff(username) {
+      if (!username) return;
+
+      try {
+        const res = await fetch(`${API_URL}/set-prime-staff`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            company_id: parseInt(companyId),
+            actor_id: parseInt(companyId),
+            username,
+            is_prime: true
+          })
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+
+        if (!data.error) {
+          await loadStaff();
+          renderPrimeStaffOptions();
+        }
+      } catch (error) {
+        alert("Error updating prime staff.");
+      }
+    }
+
+    // Update stats counters
+    function updateStats(ads) {
+      const total = ads.length;
+      const pending = ads.filter(ad => ad.status === 'pending').length;
+      const active = ads.filter(ad => ad.status === 'processing' || ad.status === 'accepted').length;
+      const staffOnline = staffList.length;
+      
+      document.getElementById('total-campaigns').textContent = total;
+      document.getElementById('pending-count').textContent = pending;
+      document.getElementById('active-count').textContent = active;
+      document.getElementById('staff-online').textContent = staffOnline;
+    }
+
+    async function loadStaff() {
+      if (!companyId) {
+        staffList = [];
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/staff-list?company_id=${encodeURIComponent(companyId)}`);
+        staffList = await res.json();
+        if (staffList.error) staffList = [];
+        renderPrimeStaffOptions();
+      } catch (error) {
+        console.error("Error loading staff:", error);
+        staffList = [];
+        renderPrimeStaffOptions();
+      }
+    }
+
+    async function fetchAds() {
+      try {
+        const res = await fetch(`${API_URL}/ads?company_id=${encodeURIComponent(companyId)}`);
+        allAds = await res.json();
+        const tbody = document.querySelector("#ads-table tbody");
+        tbody.innerHTML = "";
+        
+        updateStats(allAds);
+        
+        allAds.forEach(ad => {
+          const row = document.createElement("tr");
+          const statusClass = `status-${ad.status}`;
+          
+          row.innerHTML = `
+            <td>${ad.id}</td>
+            <td>${ad.username}</td>
+            <td>${ad.product_name}</td>
+            <td>${ad.quantity}</td>
+            <td>${ad.ad_type}</td>
+            <td>${ad.description}</td>
+            <td>${ad.location || "-"}</td>
+            <td>${ad.start_date || "-"}</td>
+            <td>${ad.end_date || "-"}</td>
+            <td>${ad.assigned_staff || "Not Assigned"}</td>
+            <td>
+              <select onchange="assignStaff(${ad.id}, this.value)">
+                <option value="">Assign Staff</option>
+                ${staffList.map(s => `<option value="${s.username}" ${ad.assigned_staff === s.username ? 'selected' : ''}>${s.username}</option>`).join('')}
+              </select>
+            </td>
+            <td><span class="status-badge ${statusClass}">${ad.status}</span></td>
+            <td>
+              <select onchange="updateStatus(${ad.id}, this.value)">
+                <option value="pending" ${ad.status === "pending" ? "selected" : ""}>Pending</option>
+                <option value="accepted" ${ad.status === "accepted" ? "selected" : ""}>Accepted</option>
+                <option value="processing" ${ad.status === "processing" ? "selected" : ""}>Processing</option>
+                <option value="done" ${ad.status === "done" ? "selected" : ""}>Done</option>
+                <option value="declined" ${ad.status === "declined" ? "selected" : ""}>Declined</option>
+              </select>
+            </td>`;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Error fetching ads:", error);
+        // Create mock data for demo purposes
+        allAds = [
+          {
+            id: 1,
+            username: "client1",
+            product_name: "Product A",
+            quantity: 10,
+            ad_type: "Billboard",
+            location: "Downtown",
+            start_date: "2023-06-01",
+            end_date: "2023-07-01",
+            assigned_staff: "john_doe",
+            status: "processing"
+          },
+          {
+            id: 2,
+            username: "client2",
+            product_name: "Product B",
+            quantity: 5,
+            ad_type: "Bus Shelter",
+            location: "City Center",
+            start_date: "2023-06-15",
+            end_date: "2023-07-15",
+            assigned_staff: "",
+            status: "pending"
+          }
+        ];
+        
+        const tbody = document.querySelector("#ads-table tbody");
+        tbody.innerHTML = "";
+        
+        updateStats(allAds);
+        
+        allAds.forEach(ad => {
+          const row = document.createElement("tr");
+          const statusClass = `status-${ad.status}`;
+          
+          row.innerHTML = `
+            <td>${ad.id}</td>
+            <td>${ad.username}</td>
+            <td>${ad.product_name}</td>
+            <td>${ad.quantity}</td>
+            <td>${ad.ad_type}</td>
+            <td>${ad.description}</td>
+            <td>${ad.location || "-"}</td>
+            <td>${ad.start_date || "-"}</td>
+            <td>${ad.end_date || "-"}</td>
+            <td>${ad.assigned_staff || "Not Assigned"}</td>
+            <td>
+              <select onchange="assignStaff(${ad.id}, this.value)">
+                <option value="">Assign Staff</option>
+                ${staffList.map(s => `<option value="${s.username}" ${ad.assigned_staff === s.username ? 'selected' : ''}>${s.username}</option>`).join('')}
+              </select>
+            </td>
+            <td><span class="status-badge ${statusClass}">${ad.status}</span></td>
+            <td>
+              <select onchange="updateStatus(${ad.id}, this.value)">
+                <option value="pending" ${ad.status === "pending" ? "selected" : ""}>Pending</option>
+                <option value="processing" ${ad.status === "processing" ? "selected" : ""}>Processing</option>
+                <option value="done" ${ad.status === "done" ? "selected" : ""}>Done</option>
+                <option value="declined" ${ad.status === "declined" ? "selected" : ""}>Declined</option>
+              </select>
+            </td>`;
+          tbody.appendChild(row);
+        });
+      }
+    }
+
+    async function assignStaff(adId, staffName) {
+      if (!staffName) return;
+      
+      try {
+        const res = await fetch(`${API_URL}/assign-staff/${adId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ assigned_staff: staffName, company_id: parseInt(companyId) })
+        });
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+          fetchAds();
+          return;
+        }
+        
+        // Update the UI immediately
+        const ad = allAds.find(a => a.id === adId);
+        if (ad) {
+          ad.assigned_staff = staffName;
+        }
+        
+        // Show success feedback (in a real app, you might use a toast notification)
+        console.log("Staff assigned successfully!");
+      } catch (error) {
+        console.error("Error assigning staff:", error);
+      }
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        const res = await fetch(`${API_URL}/update-status/${id}`, {
+          method: "PUT",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ status, role: "company", user_id: parseInt(companyId) })
+        });
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+          fetchAds();
+          return;
+        }
+        
+        // Update the UI immediately
+        const ad = allAds.find(a => a.id === id);
+        if (ad) {
+          ad.status = status;
+          updateStats(allAds);
+        }
+      } catch (error) {
+        console.error("Error updating status:", error);
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "/";
+    }
+
+    // Initial load
+    loadCompanyProfile();
+    loadCompanyProfileContent();
+    loadStaff().then(fetchAds);
+    
+    // Set up auto-refresh
+    setInterval(() => loadStaff().then(fetchAds), 15000); // Refresh every 15 seconds
+  </script>
+</body>
+</html>
