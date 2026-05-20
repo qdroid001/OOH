@@ -26,6 +26,14 @@ def init_db():
         "is_prime_staff": "INTEGER DEFAULT 0",
         "company_about": "TEXT",
         "company_media": "TEXT",
+        "profile_pic": "TEXT",
+        "staff_about": "TEXT",
+        "first_name": "TEXT",
+        "last_name": "TEXT",
+        "phone_number": "TEXT",
+        "address": "TEXT",
+        "department": "TEXT",
+        "skills": "TEXT",
     }
 
     for column_name, column_type in company_columns.items():
@@ -60,6 +68,7 @@ def init_db():
         "status": "TEXT DEFAULT 'pending'",
         "assigned_staff": "TEXT",
         "created_at": "TEXT",
+        "completion_media": "TEXT",
     }
 
     for column_name, column_type in ad_columns.items():

@@ -10,11 +10,13 @@ from database import get_db_connection
 
 company_bp = Blueprint("company", __name__)
 
-VALID_STATUS = ["pending", "accepted", "processing", "done", "declined"]
-STAFF_ALLOWED_STATUS = ["pending", "processing", "done"]
+VALID_STATUS = ["pending", "accepted", "processing", "done", "completed", "declined"]
+STAFF_ALLOWED_STATUS = ["pending", "processing", "done", "completed"]
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 COMPANY_MEDIA_FOLDER = os.path.join(BASE_DIR, "static", "uploads", "company_media")
+COMPANY_LOGO_FOLDER = os.path.join(BASE_DIR, "static", "uploads", "company_logos")
 ALLOWED_MEDIA_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "webm", "mov"}
+ALLOWED_LOGO_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
 def create_staff_key():
@@ -29,6 +31,26 @@ def allowed_media(filename):
 def media_type(filename):
     extension = filename.rsplit(".", 1)[1].lower()
     return "video" if extension in {"mp4", "webm", "mov"} else "image"
+
+
+def allowed_logo(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_LOGO_EXTENSIONS
+
+
+def save_company_logo(file_storage, company_id):
+    if not file_storage or not file_storage.filename:
+        return None
+
+    if not allowed_logo(file_storage.filename):
+        raise ValueError("Company logo must be an image file: png, jpg, jpeg, gif, or webp")
+
+    os.makedirs(COMPANY_LOGO_FOLDER, exist_ok=True)
+    original_filename = secure_filename(file_storage.filename)
+    extension = original_filename.rsplit(".", 1)[1].lower()
+    filename = f"company_{company_id}_logo.{extension}"
+    save_path = os.path.join(COMPANY_LOGO_FOLDER, filename)
+    file_storage.save(save_path)
+    return f"/static/uploads/company_logos/{filename}"
 
 
 def can_edit_company_profile(cursor, company_id, user_id):
@@ -197,6 +219,7 @@ def update_company_profile(company_id):
     data = request.form if request.form else (request.get_json() or {})
     user_id = data.get("user_id")
     company_about = data.get("company_about", "").strip()
+    delete_profile = data.get("delete_profile") in ("true", "True", "1", 1, True)
 
     if not user_id:
         return jsonify({"error": "User id is required"}), 400
@@ -219,16 +242,38 @@ def update_company_profile(company_id):
 
     existing_media = json.loads(company["company_media"] or "[]")
 
-    try:
-        new_media = save_company_media(request.files.getlist("company_media"), company_id)
-    except ValueError as error:
-        conn.close()
-        return jsonify({"error": str(error)}), 400
+    if delete_profile:
+        company_media = []
+        company_about = ""
+        company_logo = None
+    else:
+        company_logo = None
+        if request.files.get("company_logo"):
+            try:
+                company_logo = save_company_logo(request.files.get("company_logo"), company_id)
+            except ValueError as error:
+                conn.close()
+                return jsonify({"error": str(error)}), 400
 
-    company_media = existing_media + new_media
+        try:
+            new_media = save_company_media(request.files.getlist("company_media"), company_id)
+        except ValueError as error:
+            conn.close()
+            return jsonify({"error": str(error)}), 400
+
+        company_media = existing_media + new_media
+
+    update_fields = ["company_about=?, company_media=?"]
+    params = [company_about, json.dumps(company_media)]
+    if company_logo is not None:
+        update_fields.append("company_logo=?")
+        params.append(company_logo)
+
+    params.append(company_id)
+
     cursor.execute(
-        "UPDATE users SET company_about=?, company_media=? WHERE id=? AND role='company'",
-        (company_about, json.dumps(company_media), company_id)
+        f"UPDATE users SET {', '.join(update_fields)} WHERE id=? AND role='company'",
+        tuple(params)
     )
     conn.commit()
     conn.close()
@@ -402,7 +447,7 @@ def staff_list():
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT username, is_prime_staff FROM users WHERE role='staff' AND company_id=?",
+        "SELECT id, username, profile_pic, is_prime_staff FROM users WHERE role='staff' AND company_id=?",
         (company_id,)
     )
     staff = [dict(row) for row in cursor.fetchall()]

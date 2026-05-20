@@ -97,6 +97,7 @@
       border: 2px solid rgba(255, 255, 255, 0.2);
       overflow: hidden;
       flex-shrink: 0;
+      cursor: pointer;
     }
 
     .company-avatar img {
@@ -104,6 +105,111 @@
       height: 100%;
       object-fit: cover;
       display: none;
+    }
+
+    .avatar-popup {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .avatar-popup.visible {
+      display: flex;
+    }
+
+    .avatar-popup-card {
+      width: min(420px, 100%);
+      border-radius: 18px;
+      background: white;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar-popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .avatar-popup-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .avatar-popup-close {
+      border: none;
+      background: transparent;
+      color: #64748b;
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .avatar-popup-body {
+      padding: 24px 20px 20px;
+      text-align: center;
+    }
+
+    .avatar-popup-image {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-popup-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-popup-text {
+      margin-bottom: 18px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .avatar-popup-actions {
+      display: grid;
+      gap: 12px;
+      padding: 0 20px 24px;
+    }
+
+    .avatar-popup-actions button {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.25s ease;
+      font-size: 14px;
+    }
+
+    .avatar-popup-actions .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .avatar-popup-actions .secondary {
+      background: #f8fafc;
+      color: #111827;
+      border: 1px solid #e2e8f0;
     }
     
     .company-details h3 {
@@ -616,9 +722,29 @@
       </div>
       
       <div class="company-info">
-        <div class="company-avatar" id="companyAvatar">
+        <div class="company-avatar" id="companyAvatar" onclick="openAvatarPopup('company')">
           <i class="fas fa-crown" id="companyAvatarIcon"></i>
           <img id="companyLogo" alt="Company Logo">
+        </div>
+        <div id="avatarPopup" class="avatar-popup" onclick="closeAvatarPopup(event)">
+          <div class="avatar-popup-card" onclick="event.stopPropagation()">
+            <div class="avatar-popup-header">
+              <h3 id="avatarPopupTitle">Company Logo</h3>
+              <button type="button" class="avatar-popup-close" onclick="closeAvatarPopup()">×</button>
+            </div>
+            <div class="avatar-popup-body">
+              <div class="avatar-popup-image">
+                <img id="avatarPopupImage" alt="Logo Preview">
+                <i class="fas fa-building fa-3x" id="avatarPopupFallback" style="color:#94a3b8;"></i>
+              </div>
+              <div id="avatarPopupText" class="avatar-popup-text">View or update your company logo here.</div>
+            </div>
+            <div class="avatar-popup-actions">
+              <button type="button" class="primary" onclick="avatarPopupView()">View Company Logo</button>
+              <button type="button" class="secondary" onclick="avatarPopupChooseFile()">Change Company Logo</button>
+              <input type="file" id="avatarPopupFile" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">
+            </div>
+          </div>
         </div>
         <div class="company-details">
           <h3 id="companyName">Company</h3>
@@ -633,6 +759,14 @@
         <a href="#" class="active" id="dashboardLink">
           <i class="fas fa-tachometer-alt"></i>
           <span>Dashboard</span>
+        </a>
+        <a href="#" id="myStaffLink">
+          <i class="fas fa-users"></i>
+          <span>My Staff</span>
+        </a>
+        <a href="#" id="activeStaffLink">
+          <i class="fas fa-user-check"></i>
+          <span>Active Staff</span>
         </a>
         <a href="#" id="aboutLink">
           <i class="fas fa-info-circle"></i>
@@ -765,6 +899,45 @@
         </div>
       </div>
 
+      <div id="myStaff" style="display:none;">
+        <div class="header">
+          <h1>My Staff</h1>
+        </div>
+        <div class="table-container">
+          <table id="staff-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Prime Staff</th>
+                <th>Profile Picture</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="activeStaff" style="display:none;">
+        <div class="header">
+          <h1>Active Staff</h1>
+        </div>
+        <div class="table-container">
+          <table id="active-staff-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Prime Staff</th>
+                <th>Active Assignments</th>
+                <th>Profile Picture</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
       <div id="about">
         <div class="header">
           <h1>Company Profile</h1>
@@ -788,6 +961,10 @@
             <i class="fas fa-save"></i>
             <span>Save Profile</span>
           </button>
+          <button class="header-action-btn" style="margin-top: 15px; margin-left: 10px; background: #e74c3c;" onclick="deleteCompanyProfile()">
+            <i class="fas fa-trash-alt"></i>
+            <span>Delete Profile Info</span>
+          </button>
         </div>
 
         <div class="profile-preview">
@@ -804,11 +981,21 @@
     let staffList = [];
     let allAds = [];
     const companyId = localStorage.getItem("user_id");
+    let companyLogo = localStorage.getItem("company_logo");
+    let avatarPopupMode = null;
 
     // Navigation functionality
     document.getElementById('dashboardLink').addEventListener('click', function(e) {
       e.preventDefault();
       showPage('dashboard');
+    });
+    document.getElementById('myStaffLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      showPage('myStaff');
+    });
+    document.getElementById('activeStaffLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      showPage('activeStaff');
     });
     
     document.getElementById('aboutLink').addEventListener('click', function(e) {
@@ -817,12 +1004,18 @@
     });
 
     function showPage(pageId) {
-      document.getElementById('dashboard').style.display = pageId === 'dashboard' ? 'block' : 'none';
-      document.getElementById('about').style.display = pageId === 'about' ? 'block' : 'none';
-      
-      // Update active link
+      const pageIds = ['dashboard', 'myStaff', 'activeStaff', 'about'];
+      pageIds.forEach(id => {
+        const page = document.getElementById(id);
+        if (page) page.style.display = id === pageId ? 'block' : 'none';
+      });
+
       document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
-      document.getElementById(pageId === 'dashboard' ? 'dashboardLink' : 'aboutLink').classList.add('active');
+      const link = document.getElementById(pageId + 'Link');
+      if (link) link.classList.add('active');
+
+      if (pageId === 'myStaff') renderMyStaff();
+      if (pageId === 'activeStaff') renderActiveStaff();
     }
 
     function loadCompanyProfile() {
@@ -838,6 +1031,8 @@
       document.getElementById("companyAddress").textContent = address;
       document.getElementById("companyHotline").textContent = hotline ? `Hotline: ${hotline}` : "";
       document.getElementById("staffRegistrationKey").textContent = staffKey || "No key generated yet";
+
+      companyLogo = logo;
 
       if (logo) {
         const logoImg = document.getElementById("companyLogo");
@@ -957,6 +1152,121 @@
       }
     }
 
+    function openAvatarPopup(type) {
+      avatarPopupMode = type;
+      const popup = document.getElementById('avatarPopup');
+      const title = document.getElementById('avatarPopupTitle');
+      const text = document.getElementById('avatarPopupText');
+      const img = document.getElementById('avatarPopupImage');
+      const fallback = document.getElementById('avatarPopupFallback');
+      const fileInput = document.getElementById('avatarPopupFile');
+      fileInput.value = '';
+
+      title.textContent = type === 'company' ? 'Company Logo' : 'Profile Picture';
+      text.textContent = 'View or update your ' + (type === 'company' ? 'company logo.' : 'profile picture.');
+
+      if (companyLogo) {
+        img.src = companyLogo;
+        img.style.display = 'block';
+        fallback.style.display = 'none';
+      } else {
+        img.style.display = 'none';
+        fallback.style.display = 'block';
+      }
+
+      popup.classList.add('visible');
+    }
+
+    function closeAvatarPopup(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      document.getElementById('avatarPopup').classList.remove('visible');
+    }
+
+    function avatarPopupView() {
+      if (!companyLogo) {
+        alert('No company logo has been uploaded yet.');
+        return;
+      }
+      window.open(companyLogo, '_blank');
+    }
+
+    function avatarPopupChooseFile() {
+      document.getElementById('avatarPopupFile').click();
+    }
+
+    document.getElementById('avatarPopupFile').addEventListener('change', async function(event) {
+      const file = event.target.files[0];
+      if (!file || avatarPopupMode !== 'company') {
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('user_id', companyId);
+        formData.append('company_logo', file);
+
+        const res = await fetch(`${API_URL}/company-profile/${companyId}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        companyLogo = data.company_logo || companyLogo;
+        localStorage.setItem('company_logo', companyLogo || '');
+
+        const logoImg = document.getElementById('companyLogo');
+        const avatarIcon = document.getElementById('companyAvatarIcon');
+        logoImg.src = companyLogo;
+        logoImg.style.display = 'block';
+        avatarIcon.style.display = 'none';
+        document.getElementById('avatarPopupImage').src = companyLogo;
+        document.getElementById('avatarPopupImage').style.display = 'block';
+        document.getElementById('avatarPopupFallback').style.display = 'none';
+
+        alert(data.message || 'Company logo updated successfully.');
+      } catch (error) {
+        alert('Error updating company logo.');
+        console.error(error);
+      }
+    });
+
+    async function deleteCompanyProfile() {
+      if (!companyId) {
+        alert("Please log in as a company first.");
+        return;
+      }
+
+      if (!confirm("Delete all company profile information and media? This cannot be undone in the UI.")) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("user_id", companyId);
+      formData.append("delete_profile", "true");
+
+      try {
+        const res = await fetch(`${API_URL}/company-profile/${companyId}`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+
+        if (!data.error) {
+          document.getElementById("companyMediaUpload").value = "";
+          loadCompanyProfileContent();
+        }
+      } catch (error) {
+        alert("Error deleting company profile info.");
+      }
+    }
+
     function renderPrimeStaffOptions() {
       const select = document.getElementById("primeStaffSelect");
       select.innerHTML = '<option value="">Select Staff</option>';
@@ -966,6 +1276,62 @@
         option.value = staff.username;
         option.textContent = staff.is_prime_staff ? `${staff.username} (Prime)` : staff.username;
         select.appendChild(option);
+      });
+    }
+
+    function renderMyStaff() {
+      const tbody = document.querySelector('#staff-table tbody');
+      tbody.innerHTML = '';
+
+      if (!staffList.length) {
+        tbody.innerHTML = '<tr><td colspan="4">No staff members have been registered yet.</td></tr>';
+        return;
+      }
+
+      staffList.forEach(staff => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${staff.id}</td>
+          <td>${staff.username}</td>
+          <td>${staff.is_prime_staff ? 'Yes' : 'No'}</td>
+          <td>${staff.profile_pic ? `<img src="${staff.profile_pic}" alt="${staff.username}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">` : 'No photo'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function renderActiveStaff() {
+      const tbody = document.querySelector('#active-staff-table tbody');
+      tbody.innerHTML = '';
+
+      const activeUsernames = new Set(
+        allAds
+          .filter(ad => ['processing', 'accepted', 'done'].includes(ad.status) && ad.assigned_staff)
+          .map(ad => ad.assigned_staff)
+      );
+
+      const activeStaff = staffList
+        .map(staff => {
+          const activeCount = allAds.filter(ad => ad.assigned_staff === staff.username && ['processing', 'accepted', 'done'].includes(ad.status)).length;
+          return { ...staff, activeCount };
+        })
+        .filter(staff => staff.activeCount > 0);
+
+      if (!activeStaff.length) {
+        tbody.innerHTML = '<tr><td colspan="5">No active staff currently assigned to campaigns.</td></tr>';
+        return;
+      }
+
+      activeStaff.forEach(staff => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${staff.id}</td>
+          <td>${staff.username}</td>
+          <td>${staff.is_prime_staff ? 'Yes' : 'No'}</td>
+          <td>${staff.activeCount}</td>
+          <td>${staff.profile_pic ? `<img src="${staff.profile_pic}" alt="${staff.username}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">` : 'No photo'}</td>
+        `;
+        tbody.appendChild(row);
       });
     }
 

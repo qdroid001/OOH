@@ -1,4 +1,9 @@
+import os
+import secrets
+import json
+
 from flask import Blueprint, request, jsonify
+from werkzeug.utils import secure_filename
 from database import get_db_connection
 
 ads_bp = Blueprint("ads", __name__)
@@ -63,10 +68,68 @@ def get_ads():
     query += " ORDER BY created_at DESC"
     cursor.execute(query, params)
 
-    ads = [dict(row) for row in cursor.fetchall()]
+    ads = []
+    for row in cursor.fetchall():
+        ad = dict(row)
+        ad["completion_media"] = json.loads(ad["completion_media"]) if ad["completion_media"] else []
+        ads.append(ad)
+
     conn.close()
 
     return jsonify(ads)
+
+
+@ads_bp.route("/submit-completion/<int:ad_id>", methods=["POST"])
+def submit_completion(ad_id):
+    staff_id = request.form.get("staff_id")
+    if not staff_id:
+        return jsonify({"error": "Staff id is required"}), 400
+
+    if "work_image" not in request.files:
+        return jsonify({"error": "Completion evidence image is required"}), 400
+
+    work_image = request.files["work_image"]
+    if work_image.filename == "":
+        return jsonify({"error": "Invalid completion image"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM users WHERE id=? AND role='staff'", (staff_id,))
+    staff = cursor.fetchone()
+    if not staff:
+        conn.close()
+        return jsonify({"error": "Staff account not found"}), 404
+
+    cursor.execute("SELECT assigned_staff, completion_media FROM advertisements WHERE id=?", (ad_id,))
+    ad = cursor.fetchone()
+    if not ad:
+        conn.close()
+        return jsonify({"error": "Advertisement not found"}), 404
+
+    if ad["assigned_staff"] != staff["username"]:
+        conn.close()
+        return jsonify({"error": "Only the assigned staff can submit completion evidence"}), 403
+
+    filename = secure_filename(work_image.filename)
+    unique_name = f"completion_{secrets.token_hex(8)}_{filename}"
+    upload_folder = os.path.join(os.path.dirname(__file__), "..", "static", "uploads", "completion_media")
+    os.makedirs(upload_folder, exist_ok=True)
+    save_path = os.path.join(upload_folder, unique_name)
+    work_image.save(save_path)
+
+    file_path = f"/static/uploads/completion_media/{unique_name}"
+
+    existing_media = json.loads(ad["completion_media"]) if ad["completion_media"] else []
+    existing_media.append(file_path)
+
+    cursor.execute(
+        "UPDATE advertisements SET completion_media=?, status='completed' WHERE id=?",
+        (json.dumps(existing_media), ad_id)
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Completion evidence uploaded", "status": "completed", "completion_media": existing_media})
 
 
 # CLIENT ADS

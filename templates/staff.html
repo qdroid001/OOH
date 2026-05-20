@@ -96,7 +96,116 @@
       font-weight: bold;
       font-size: 18px;
     }
-    
+
+    .staff-info {
+      cursor: pointer;
+    }
+
+    .avatar-popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .avatar-popup.visible {
+      display: flex;
+    }
+
+    .avatar-popup-card {
+      width: min(420px, 100%);
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar-popup-header {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .avatar-popup-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--dark);
+    }
+
+    .avatar-popup-close {
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--gray);
+    }
+
+    .avatar-popup-body {
+      padding: 24px 20px 20px;
+      text-align: center;
+    }
+
+    .avatar-popup-image {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .avatar-popup-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-popup-text {
+      margin-bottom: 18px;
+      color: var(--gray);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .avatar-popup-actions {
+      display: grid;
+      gap: 12px;
+      padding: 0 20px 24px;
+    }
+
+    .avatar-popup-actions button {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.25s ease;
+    }
+
+    .avatar-popup-actions .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .avatar-popup-actions .secondary {
+      background: #f8fafc;
+      color: var(--dark);
+      border: 1px solid #e2e8f0;
+    }
+
     .staff-details h3 {
       font-size: 16px;
       margin-bottom: 4px;
@@ -578,13 +687,35 @@
           <h2><span>Staff Panel</span></h2>
         </div>
         
-        <div class="staff-info">
+        <div class="staff-info" onclick="openAvatarPopup('staff')">
           <div class="staff-avatar">
-            <i class="fas fa-user"></i>
+            <img id="staffProfilePic" alt="Staff Photo" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
+            <i class="fas fa-user" id="staffAvatarFallback"></i>
           </div>
           <div class="staff-details">
             <h3 id="staff-name">Staff Member</h3>
             <p>Abiok Publicity</p>
+          </div>
+        </div>
+
+        <div id="avatarPopup" class="avatar-popup" onclick="closeAvatarPopup(event)">
+          <div class="avatar-popup-card" onclick="event.stopPropagation()">
+            <div class="avatar-popup-header">
+              <h3 id="avatarPopupTitle">Staff Profile Picture</h3>
+              <button type="button" class="avatar-popup-close" onclick="closeAvatarPopup()">×</button>
+            </div>
+            <div class="avatar-popup-body">
+              <div class="avatar-popup-image">
+                <img id="avatarPopupImage" alt="Preview">
+                <i class="fas fa-user fa-3x" id="avatarPopupFallback" style="color:#94a3b8;"></i>
+              </div>
+              <div id="avatarPopupText" class="avatar-popup-text">View or update your staff profile picture.</div>
+            </div>
+            <div class="avatar-popup-actions">
+              <button type="button" class="primary" onclick="avatarPopupView()">View Profile Picture</button>
+              <button type="button" class="secondary" onclick="avatarPopupChooseFile()">Change Profile Picture</button>
+              <input type="file" id="avatarPopupFile" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">
+            </div>
           </div>
         </div>
         
@@ -592,6 +723,10 @@
           <a href="#" id="dashboard-link" class="active" onclick="showPage('dashboard')">
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
+          </a>
+          <a href="#" id="profile-link" onclick="showPage('profile')">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
           </a>
           <a href="#" id="about-link" onclick="showPage('about')">
             <i class="fas fa-info-circle"></i>
@@ -681,6 +816,61 @@
         </div>
       </div>
 
+      <div id="profile" class="page">
+        <div class="header">
+          <h1>My Profile</h1>
+        </div>
+        <div class="profile-editor" style="padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-top: 20px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label for="staffFirstName">First Name</label>
+              <input type="text" id="staffFirstName" placeholder="First name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            <div>
+              <label for="staffLastName">Last Name</label>
+              <input type="text" id="staffLastName" placeholder="Last name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label for="staffPhoneNumber">Phone Number</label>
+              <input type="text" id="staffPhoneNumber" placeholder="Phone number" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            <div>
+              <label for="staffDepartment">Department</label>
+              <input type="text" id="staffDepartment" placeholder="Department" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label for="staffAddress">Address</label>
+            <input type="text" id="staffAddress" placeholder="Address" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label for="staffSkills">Skills</label>
+            <input type="text" id="staffSkills" placeholder="Skills (comma separated)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+          </div>
+          <label for="staffProfilePicUpload">Upload Profile Picture</label>
+          <input type="file" id="staffProfilePicUpload" accept="image/png,image/jpeg,image/gif,image/webp" style="margin-bottom: 15px;">
+          <button class="save-btn" onclick="updateStaffProfilePic()">
+            <i class="fas fa-upload"></i>
+            <span>Update Profile Picture</span>
+          </button>
+
+          <hr style="margin: 20px 0; border-color: #eee;">
+
+          <label for="staffAboutText">About Me</label>
+          <textarea id="staffAboutText" placeholder="Describe yourself and your experience" style="width: 100%; min-height: 120px; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+          <button class="save-btn" onclick="saveStaffProfileInfo()" style="margin-right: 12px;">
+            <i class="fas fa-save"></i>
+            <span>Save Profile</span>
+          </button>
+          <button class="save-btn" onclick="deleteStaffProfileInfo()" style="background: #e74c3c;">
+            <i class="fas fa-trash-alt"></i>
+            <span>Delete About</span>
+          </button>
+        </div>
+      </div>
+
       <!-- About Page -->
       <div id="about" class="page">
         <div class="header">
@@ -718,9 +908,18 @@
     const staffUsername = localStorage.getItem("username") || "Staff";
     const staffUserId = localStorage.getItem("user_id");
     const staffCompanyId = localStorage.getItem("company_id");
+    let staffProfilePic = localStorage.getItem("profile_pic");
+    let avatarPopupMode = null;
     
-    // Set staff name in the sidebar
+    // Set staff name and avatar in the sidebar
     document.getElementById("staff-name").textContent = staffUsername;
+    if (staffProfilePic) {
+      const img = document.getElementById('staffProfilePic');
+      const fallback = document.getElementById('staffAvatarFallback');
+      img.src = staffProfilePic;
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+    }
 
     // Update stats counters
     function updateStats(ads) {
@@ -738,9 +937,11 @@
     // Switch between dashboard and about
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
+      const page = document.getElementById(pageId);
+      if (page) page.classList.add('active');
       document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
-      document.getElementById(pageId + '-link').classList.add('active');
+      const link = document.getElementById(pageId + '-link');
+      if (link) link.classList.add('active');
 
       if (pageId === 'about') {
         loadCompanyProfile();
@@ -818,6 +1019,250 @@
         alert("Error saving company profile.");
       }
     }
+
+    async function updateStaffProfilePic() {
+      if (!staffUserId) {
+        alert("Staff user is not signed in.");
+        return;
+      }
+
+      const fileInput = document.getElementById('staffProfilePicUpload');
+      if (!fileInput || !fileInput.files[0]) {
+        alert('Please choose a profile picture to upload.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('user_id', staffUserId);
+      formData.append('profile_pic', fileInput.files[0]);
+
+      try {
+        const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        localStorage.setItem('profile_pic', data.profile_pic || '');
+        const img = document.getElementById('staffProfilePic');
+        const fallback = document.getElementById('staffAvatarFallback');
+        if (data.profile_pic) {
+          img.src = data.profile_pic;
+          img.style.display = 'block';
+          fallback.style.display = 'none';
+        }
+
+        fileInput.value = '';
+        alert('Profile picture updated successfully.');
+      } catch (error) {
+        alert('Error updating profile picture.');
+      }
+    }
+
+    async function saveStaffProfileInfo() {
+      if (!staffUserId) {
+        alert("Staff user is not signed in.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('user_id', staffUserId);
+      formData.append('first_name', document.getElementById('staffFirstName').value.trim());
+      formData.append('last_name', document.getElementById('staffLastName').value.trim());
+      formData.append('phone_number', document.getElementById('staffPhoneNumber').value.trim());
+      formData.append('address', document.getElementById('staffAddress').value.trim());
+      formData.append('department', document.getElementById('staffDepartment').value.trim());
+      formData.append('skills', document.getElementById('staffSkills').value.trim());
+      formData.append('staff_about', document.getElementById('staffAboutText').value.trim());
+
+      try {
+        const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        if (data.first_name || data.last_name) {
+          const fullName = [data.first_name || '', data.last_name || ''].filter(Boolean).join(' ');
+          if (fullName) {
+            document.getElementById('staff-name').textContent = fullName;
+          }
+        }
+
+        alert('Staff profile info updated successfully.');
+      } catch (error) {
+        alert('Error updating staff profile info.');
+      }
+    }
+
+    async function deleteStaffProfileInfo() {
+      if (!staffUserId) {
+        alert("Staff user is not signed in.");
+        return;
+      }
+
+      if (!confirm('Remove your "About Me" text?')) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('user_id', staffUserId);
+      formData.append('delete_about', 'true');
+
+      try {
+        const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        document.getElementById('staffAboutText').value = '';
+        alert('Staff about info deleted successfully.');
+      } catch (error) {
+        alert('Error deleting staff profile info.');
+      }
+    }
+
+    async function loadStaffProfile() {
+      if (!staffUserId) return;
+
+      try {
+        const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`);
+        const profile = await res.json();
+        if (profile.error) {
+          return;
+        }
+
+        if (profile.profile_pic) {
+          const img = document.getElementById('staffProfilePic');
+          const fallback = document.getElementById('staffAvatarFallback');
+          img.src = profile.profile_pic;
+          img.style.display = 'block';
+          fallback.style.display = 'none';
+          staffProfilePic = profile.profile_pic;
+          localStorage.setItem('profile_pic', profile.profile_pic);
+        }
+
+        document.getElementById('staffAboutText').value = profile.staff_about || '';
+        document.getElementById('staffFirstName').value = profile.first_name || '';
+        document.getElementById('staffLastName').value = profile.last_name || '';
+        document.getElementById('staffPhoneNumber').value = profile.phone_number || '';
+        document.getElementById('staffAddress').value = profile.address || '';
+        document.getElementById('staffDepartment').value = profile.department || '';
+        document.getElementById('staffSkills').value = profile.skills || '';
+
+        const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
+        if (fullName) {
+          document.getElementById('staff-name').textContent = fullName;
+        }
+      } catch (error) {
+        console.error('Error loading staff profile:', error);
+      }
+    }
+
+    function openAvatarPopup(type) {
+      avatarPopupMode = type;
+      const popup = document.getElementById('avatarPopup');
+      const title = document.getElementById('avatarPopupTitle');
+      const text = document.getElementById('avatarPopupText');
+      const img = document.getElementById('avatarPopupImage');
+      const fallback = document.getElementById('avatarPopupFallback');
+      const fileInput = document.getElementById('avatarPopupFile');
+      fileInput.value = '';
+
+      if (type === 'staff') {
+        title.textContent = 'Staff Profile Picture';
+        text.textContent = 'View or update your staff profile picture from here.';
+        if (staffProfilePic) {
+          img.src = staffProfilePic;
+          img.style.display = 'block';
+          fallback.style.display = 'none';
+        } else {
+          img.style.display = 'none';
+          fallback.style.display = 'block';
+        }
+      }
+
+      popup.classList.add('visible');
+    }
+
+    function closeAvatarPopup(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      document.getElementById('avatarPopup').classList.remove('visible');
+    }
+
+    function avatarPopupView() {
+      const imageUrl = avatarPopupMode === 'staff' ? staffProfilePic : null;
+      if (!imageUrl) {
+        alert('No profile picture has been uploaded yet.');
+        return;
+      }
+      window.open(imageUrl, '_blank');
+    }
+
+    function avatarPopupChooseFile() {
+      document.getElementById('avatarPopupFile').click();
+    }
+
+    document.getElementById('avatarPopupFile').addEventListener('change', async function(event) {
+      const file = event.target.files[0];
+      if (!file || avatarPopupMode !== 'staff') {
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('user_id', staffUserId);
+        formData.append('profile_pic', file);
+
+        const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        staffProfilePic = data.profile_pic || staffProfilePic;
+        localStorage.setItem('profile_pic', staffProfilePic || '');
+
+        const img = document.getElementById('staffProfilePic');
+        const fallback = document.getElementById('staffAvatarFallback');
+        img.src = staffProfilePic;
+        img.style.display = 'block';
+        fallback.style.display = 'none';
+
+        document.getElementById('avatarPopupImage').src = staffProfilePic;
+        document.getElementById('avatarPopupImage').style.display = 'block';
+        document.getElementById('avatarPopupFallback').style.display = 'none';
+
+        document.getElementById('staffProfilePicUpload').value = '';
+        alert(data.message || 'Profile picture updated successfully.');
+      } catch (error) {
+        alert('Error updating profile picture.');
+        console.error(error);
+      }
+    });
 
     // Logout and redirect to index
     function logout() {
@@ -915,6 +1360,7 @@
     // Load ads automatically
     fetchAds();
     loadCompanyProfile();
+    loadStaffProfile();
     setInterval(fetchAds, 10000); // Refresh every 10 seconds
   </script>
 </body>
