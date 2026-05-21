@@ -447,7 +447,7 @@ def staff_list():
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT id, username, profile_pic, is_prime_staff FROM users WHERE role='staff' AND company_id=?",
+        "SELECT id, username, profile_pic, is_prime_staff, first_name, last_name, phone_number, address, department, skills, staff_about FROM users WHERE role='staff' AND company_id=?",
         (company_id,)
     )
     staff = [dict(row) for row in cursor.fetchall()]

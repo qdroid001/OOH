@@ -227,6 +227,10 @@
       margin-bottom: 40px;
       border-left: 5px solid var(--primary);
     }
+
+    .form-container.hidden {
+      display: none;
+    }
     
     .form-header {
       display: flex;
@@ -302,23 +306,48 @@
     }
 
     .company-selection {
-      margin-bottom: 25px;
+      background: white;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      border-left: 5px solid var(--accent);
+    }
+
+    .company-selection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--gray-light);
+    }
+
+    .company-selection-header h3 {
+      color: var(--dark);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .company-selection-header p {
+      color: var(--gray);
+      font-size: 14px;
     }
 
     .company-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
     }
 
     .company-card {
       border: 1px solid var(--gray-light);
-      border-radius: 8px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 20px;
       background: #f8fafc;
-      cursor: pointer;
       transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      text-align: center;
     }
 
     .company-card:hover,
@@ -329,28 +358,31 @@
     }
 
     .company-card-header {
-      display: flex;
-      align-items: center;
+      display: grid;
+      place-items: center;
       gap: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .company-card-logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
       object-fit: cover;
       background: var(--primary);
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
+      font-size: 30px;
+      font-weight: 800;
       flex-shrink: 0;
+      border: 4px solid white;
+      box-shadow: 0 8px 22px rgba(67, 97, 238, 0.18);
     }
 
     .company-card h4 {
-      font-size: 16px;
+      font-size: 17px;
       color: var(--dark);
       margin-bottom: 4px;
     }
@@ -362,35 +394,116 @@
       line-height: 1.5;
     }
 
-    .company-about-preview {
-      max-height: 80px;
-      overflow: hidden;
-    }
-
-    .company-media-preview {
+    .company-card-actions {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 12px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
     }
 
-    .company-media-preview img,
-    .company-media-preview video {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 6px;
-      background: var(--gray-light);
+    .company-action-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .company-action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .company-action-btn.about {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--gray-light);
+    }
+
+    .company-action-btn.select {
+      background: var(--primary);
+      color: white;
     }
 
     .selected-company-note {
-      margin-top: 12px;
-      padding: 12px;
+      margin-bottom: 18px;
+      padding: 14px 16px;
       border-radius: 8px;
       background: rgba(67, 97, 238, 0.08);
       color: var(--primary-dark);
       font-weight: 600;
       display: none;
+    }
+
+    .company-about-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.56);
+    }
+
+    .company-about-modal.visible {
+      display: flex;
+    }
+
+    .company-about-card {
+      width: min(620px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.3);
+    }
+
+    .company-about-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--gray-light);
+    }
+
+    .company-about-header h3 {
+      color: var(--dark);
+      font-size: 20px;
+    }
+
+    .company-about-close {
+      background: transparent;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .company-about-body {
+      padding: 22px;
+      color: var(--gray);
+    }
+
+    .company-about-body p {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .company-about-meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-light);
     }
     
     .table-container {
@@ -562,7 +675,7 @@
       }
       
       .form-container {
-        width: 95%;
+        width: 100%;
       }
       
       .about-content {
@@ -583,6 +696,11 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
+      }
+
+      .company-selection-header {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
     
@@ -676,22 +794,29 @@
             </div>
           </div>
         </div>
+
+        <div class="company-selection">
+          <div class="company-selection-header">
+            <div>
+              <h3>Available Companies</h3>
+              <p>Choose a company before submitting your campaign.</p>
+            </div>
+          </div>
+          <div class="company-grid" id="companyGrid">
+            <p style="color: var(--gray);">Loading available companies...</p>
+          </div>
+        </div>
         
-        <div class="form-container">
+        <div class="selected-company-note" id="selectedCompanyNote"></div>
+
+        <div class="form-container hidden" id="campaignFormContainer">
           <div class="form-header">
             <i class="fas fa-rocket"></i>
             <h3>Submit New Campaign</h3>
           </div>
           
           <form id="ad-form">
-            <div class="company-selection">
-              <label>Select Company</label>
-              <input type="hidden" id="selected_company_id" required>
-              <div class="company-grid" id="companyGrid">
-                <p style="color: var(--gray);">Loading available companies...</p>
-              </div>
-              <div class="selected-company-note" id="selectedCompanyNote"></div>
-            </div>
+            <input type="hidden" id="selected_company_id" required>
 
             <div class="form-row">
               <div>
@@ -873,6 +998,23 @@
     </div>
   </div>
 
+  <div id="companyAboutModal" class="company-about-modal" onclick="closeCompanyAbout(event)">
+    <div class="company-about-card" onclick="event.stopPropagation()">
+      <div class="company-about-header">
+        <h3 id="companyAboutTitle">Company Details</h3>
+        <button type="button" class="company-about-close" onclick="closeCompanyAbout()">×</button>
+      </div>
+      <div class="company-about-body">
+        <p id="companyAboutText">No company information added yet.</p>
+        <div class="company-about-meta">
+          <div><strong>Address:</strong> <span id="companyAboutAddress">Not provided</span></div>
+          <div><strong>Hotline:</strong> <span id="companyAboutHotline">Not provided</span></div>
+          <div><strong>Email:</strong> <span id="companyAboutEmail">Not provided</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = "http://127.0.0.1:5000";
     const userId = localStorage.getItem("user_id");
@@ -910,22 +1052,13 @@
       window.location.href = "/";
     }
 
-    function mediaElement(item) {
-      if (item.type === "video") {
-        return `<video src="${item.url}" muted></video>`;
-      }
-
-      return `<img src="${item.url}" alt="${item.name || 'Company media'}">`;
-    }
-
     function renderCompanyCard(company) {
       const logo = company.company_logo
         ? `<img class="company-card-logo" src="${company.company_logo}" alt="${company.username} logo">`
         : `<div class="company-card-logo">${company.username.charAt(0).toUpperCase()}</div>`;
-      const media = (company.company_media || []).slice(0, 3).map(mediaElement).join("");
 
       return `
-        <div class="company-card" onclick="selectCompany(${company.id})" id="company-card-${company.id}">
+        <div class="company-card" id="company-card-${company.id}">
           <div class="company-card-header">
             ${logo}
             <div>
@@ -934,9 +1067,16 @@
             </div>
           </div>
           <p>${company.company_address || "No address provided"}</p>
-          <p>${company.company_hotline ? `Hotline: ${company.company_hotline}` : "No hotline provided"}</p>
-          <p class="company-about-preview">${company.company_about || "No company information added yet."}</p>
-          ${media ? `<div class="company-media-preview">${media}</div>` : ""}
+          <div class="company-card-actions">
+            <button type="button" class="company-action-btn about" onclick="showCompanyAbout(${company.id})">
+              <i class="fas fa-info-circle"></i>
+              <span>About</span>
+            </button>
+            <button type="button" class="company-action-btn select" onclick="selectCompany(${company.id})">
+              <i class="fas fa-check"></i>
+              <span>Select</span>
+            </button>
+          </div>
         </div>
       `;
     }
@@ -968,8 +1108,30 @@
       document.getElementById(`company-card-${company.id}`).classList.add("selected");
 
       const note = document.getElementById("selectedCompanyNote");
-      note.textContent = `Selected company: ${company.username}`;
+      note.textContent = `Selected company: ${company.username}. You can now submit a new campaign to this company.`;
       note.style.display = "block";
+
+      document.getElementById("campaignFormContainer").classList.remove("hidden");
+      document.getElementById("campaignFormContainer").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showCompanyAbout(companyId) {
+      const company = availableCompanies.find(item => item.id === companyId);
+      if (!company) return;
+
+      document.getElementById("companyAboutTitle").textContent = company.username;
+      document.getElementById("companyAboutText").textContent = company.company_about || "No company information added yet.";
+      document.getElementById("companyAboutAddress").textContent = company.company_address || "Not provided";
+      document.getElementById("companyAboutHotline").textContent = company.company_hotline || "Not provided";
+      document.getElementById("companyAboutEmail").textContent = company.email || "Not provided";
+      document.getElementById("companyAboutModal").classList.add("visible");
+    }
+
+    function closeCompanyAbout(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      document.getElementById("companyAboutModal").classList.remove("visible");
     }
 
     // Submit ad
@@ -1009,6 +1171,7 @@
           document.getElementById("ad-form").reset();
           document.getElementById("selected_company_id").value = "";
           document.getElementById("selectedCompanyNote").style.display = "none";
+          document.getElementById("campaignFormContainer").classList.add("hidden");
           document.querySelectorAll(".company-card").forEach(card => card.classList.remove("selected"));
           await fetchMyAds();
           showSection('history', document.querySelector("a[onclick*='history']"));

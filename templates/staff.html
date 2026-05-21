@@ -545,6 +545,155 @@
       color: var(--gray);
     }
 
+    .profile-shell {
+      display: grid;
+      gap: 20px;
+    }
+
+    .profile-card {
+      background: white;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .profile-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px;
+      background: linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .profile-hero .save-btn,
+    .profile-upload-actions .save-btn {
+      margin-top: 0;
+    }
+
+    .profile-identity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .profile-avatar-large {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: white;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.2);
+      flex-shrink: 0;
+    }
+
+    .profile-identity h2 {
+      font-size: 22px;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+
+    .profile-identity p {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .profile-body {
+      padding: 24px;
+    }
+
+    .profile-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+    }
+
+    .profile-detail {
+      min-height: 88px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+
+    .profile-detail.wide {
+      grid-column: span 2;
+    }
+
+    .profile-detail p {
+      margin-bottom: 6px;
+      color: var(--gray);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .profile-detail strong {
+      display: block;
+      color: var(--dark);
+      font-size: 15px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .profile-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .profile-actions span {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .profile-upload-panel {
+      padding: 22px 24px 24px;
+    }
+
+    .profile-upload-panel h3 {
+      color: var(--dark);
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .profile-upload-actions {
+      display: flex;
+      align-items: end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .profile-upload-actions label,
+    .profile-form-store label,
+    .modal-body label,
+    .profile-editor label {
+      display: block;
+      margin: 12px 0 8px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .profile-upload-actions input[type="file"] {
+      min-width: min(320px, 100%);
+    }
+
+    .profile-form-store {
+      display: none;
+    }
+
     .profile-editor {
       display: none;
       margin-top: 20px;
@@ -558,11 +707,92 @@
       display: block;
     }
 
-    .profile-editor label {
-      display: block;
-      margin: 12px 0 8px;
-      font-weight: 600;
+    .modal-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.56);
+    }
+
+    .modal-popup.visible {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(620px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modal-header h3 {
       color: var(--dark);
+      font-size: 19px;
+    }
+
+    .modal-body {
+      padding: 20px 22px;
+    }
+
+    .modal-body input,
+    .modal-body textarea,
+    .profile-form-store input,
+    .profile-form-store textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .modal-body input:focus,
+    .modal-body textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 22px 22px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .modal-actions button {
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .modal-actions .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modal-actions .secondary {
+      background: #f8fafc;
+      color: var(--dark);
+      border: 1px solid #e2e8f0;
     }
 
     textarea,
@@ -593,6 +823,10 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .save-btn:hover {
+      background: var(--primary-dark);
     }
 
     .company-profile-text {
@@ -663,6 +897,22 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
+      }
+
+      .profile-hero,
+      .profile-upload-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .profile-hero .save-btn,
+      .profile-upload-actions .save-btn {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .profile-detail.wide {
+        grid-column: span 1;
       }
     }
     
@@ -820,54 +1070,119 @@
         <div class="header">
           <h1>My Profile</h1>
         </div>
-        <div class="profile-editor" style="padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-top: 20px;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
-            <div>
-              <label for="staffFirstName">First Name</label>
-              <input type="text" id="staffFirstName" placeholder="First name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        <div class="profile-shell">
+          <div class="profile-card">
+            <div class="profile-hero">
+              <div class="profile-identity">
+                <div class="profile-avatar-large">
+                  <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                  <h2 id="reviewFullName">-</h2>
+                  <p id="reviewDepartment">Department not added yet</p>
+                </div>
+              </div>
+              <button class="save-btn" onclick="openProfileUpdatePopup()">
+                <i class="fas fa-pen"></i>
+                <span>Edit Profile</span>
+              </button>
             </div>
-            <div>
-              <label for="staffLastName">Last Name</label>
-              <input type="text" id="staffLastName" placeholder="Last name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            <div class="profile-body">
+              <div class="profile-detail-grid">
+                <div class="profile-detail">
+                  <p>First Name</p>
+                  <strong id="recordFirstName">-</strong>
+                </div>
+                <div class="profile-detail">
+                  <p>Last Name</p>
+                  <strong id="recordLastName">-</strong>
+                </div>
+                <div class="profile-detail">
+                  <p>Phone</p>
+                  <strong id="recordPhoneNumber">-</strong>
+                </div>
+                <div class="profile-detail">
+                  <p>Department</p>
+                  <strong id="recordDepartment">-</strong>
+                </div>
+                <div class="profile-detail wide">
+                  <p>Address</p>
+                  <strong id="recordAddress">-</strong>
+                </div>
+                <div class="profile-detail wide">
+                  <p>Skills</p>
+                  <strong id="recordSkills">-</strong>
+                </div>
+                <div class="profile-detail wide">
+                  <p>About Me</p>
+                  <strong id="recordAbout">-</strong>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <span>Your company can view these details under My Staff.</span>
+                <button class="save-btn" onclick="deleteStaffProfileInfo()" style="background: #ef4444;">
+                  <i class="fas fa-trash-alt"></i>
+                  <span>Delete About</span>
+                </button>
+              </div>
             </div>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
-            <div>
-              <label for="staffPhoneNumber">Phone Number</label>
-              <input type="text" id="staffPhoneNumber" placeholder="Phone number" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-            </div>
-            <div>
-              <label for="staffDepartment">Department</label>
-              <input type="text" id="staffDepartment" placeholder="Department" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-            </div>
-          </div>
-          <div style="margin-bottom: 16px;">
-            <label for="staffAddress">Address</label>
-            <input type="text" id="staffAddress" placeholder="Address" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-          </div>
-          <div style="margin-bottom: 20px;">
-            <label for="staffSkills">Skills</label>
-            <input type="text" id="staffSkills" placeholder="Skills (comma separated)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-          </div>
-          <label for="staffProfilePicUpload">Upload Profile Picture</label>
-          <input type="file" id="staffProfilePicUpload" accept="image/png,image/jpeg,image/gif,image/webp" style="margin-bottom: 15px;">
-          <button class="save-btn" onclick="updateStaffProfilePic()">
-            <i class="fas fa-upload"></i>
-            <span>Update Profile Picture</span>
-          </button>
 
-          <hr style="margin: 20px 0; border-color: #eee;">
+          <div class="profile-card profile-upload-panel">
+            <h3>Profile Picture</h3>
+            <div class="profile-upload-actions">
+              <div>
+                <label for="staffProfilePicUpload">Upload Image</label>
+                <input type="file" id="staffProfilePicUpload" accept="image/png,image/jpeg,image/gif,image/webp">
+              </div>
+              <button class="save-btn" onclick="updateStaffProfilePic()">
+                <i class="fas fa-upload"></i>
+                <span>Update Picture</span>
+              </button>
+            </div>
+          </div>
 
-          <label for="staffAboutText">About Me</label>
-          <textarea id="staffAboutText" placeholder="Describe yourself and your experience" style="width: 100%; min-height: 120px; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
-          <button class="save-btn" onclick="saveStaffProfileInfo()" style="margin-right: 12px;">
-            <i class="fas fa-save"></i>
-            <span>Save Profile</span>
-          </button>
-          <button class="save-btn" onclick="deleteStaffProfileInfo()" style="background: #e74c3c;">
-            <i class="fas fa-trash-alt"></i>
-            <span>Delete About</span>
-          </button>
+          <div class="profile-form-store">
+            <input type="text" id="staffFirstName">
+            <input type="text" id="staffLastName">
+            <input type="text" id="staffPhoneNumber">
+            <input type="text" id="staffAddress">
+            <input type="text" id="staffDepartment">
+            <input type="text" id="staffSkills">
+            <textarea id="staffAboutText"></textarea>
+            <span id="reviewPhone">-</span>
+            <span id="reviewSkills">-</span>
+            <span id="reviewAddress">-</span>
+            <span id="reviewAbout">-</span>
+          </div>
+        </div>
+      </div>
+      <div id="profileUpdatePopup" class="modal-popup" onclick="closeProfileUpdatePopup(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Update Profile Details</h3>
+            <button type="button" class="avatar-popup-close" onclick="closeProfileUpdatePopup()">×</button>
+          </div>
+          <div class="modal-body">
+            <label for="popupFirstName">First Name</label>
+            <input type="text" id="popupFirstName" placeholder="First name">
+            <label for="popupLastName">Last Name</label>
+            <input type="text" id="popupLastName" placeholder="Last name">
+            <label for="popupPhoneNumber">Phone Number</label>
+            <input type="text" id="popupPhoneNumber" placeholder="Phone number">
+            <label for="popupDepartment">Department</label>
+            <input type="text" id="popupDepartment" placeholder="Department">
+            <label for="popupAddress">Address</label>
+            <input type="text" id="popupAddress" placeholder="Address">
+            <label for="popupSkills">Skills</label>
+            <input type="text" id="popupSkills" placeholder="Skills (comma separated)">
+            <label for="popupAboutText">About Me</label>
+            <textarea id="popupAboutText" placeholder="Describe yourself and your experience" style="min-height: 100px;"></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="secondary" onclick="closeProfileUpdatePopup()">Cancel</button>
+            <button type="button" class="primary" onclick="submitProfileUpdate()">Save Changes</button>
+          </div>
         </div>
       </div>
 
@@ -1064,21 +1379,37 @@
       }
     }
 
+    function getStaffProfileFormData(prefix = '') {
+      const firstName = document.getElementById(`${prefix}FirstName`).value.trim();
+      const lastName = document.getElementById(`${prefix}LastName`).value.trim();
+      const phoneNumber = document.getElementById(`${prefix}PhoneNumber`).value.trim();
+      const address = document.getElementById(`${prefix}Address`).value.trim();
+      const department = document.getElementById(`${prefix}Department`).value.trim();
+      const skills = document.getElementById(`${prefix}Skills`).value.trim();
+      const about = document.getElementById(`${prefix}AboutText`).value.trim();
+
+      const formData = new FormData();
+      formData.append('user_id', staffUserId);
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('phone_number', phoneNumber);
+      formData.append('address', address);
+      formData.append('department', department);
+      formData.append('skills', skills);
+      formData.append('staff_about', about);
+      return {
+        formData,
+        values: { first_name: firstName, last_name: lastName, phone_number: phoneNumber, address, department, skills, staff_about: about }
+      };
+    }
+
     async function saveStaffProfileInfo() {
       if (!staffUserId) {
         alert("Staff user is not signed in.");
         return;
       }
 
-      const formData = new FormData();
-      formData.append('user_id', staffUserId);
-      formData.append('first_name', document.getElementById('staffFirstName').value.trim());
-      formData.append('last_name', document.getElementById('staffLastName').value.trim());
-      formData.append('phone_number', document.getElementById('staffPhoneNumber').value.trim());
-      formData.append('address', document.getElementById('staffAddress').value.trim());
-      formData.append('department', document.getElementById('staffDepartment').value.trim());
-      formData.append('skills', document.getElementById('staffSkills').value.trim());
-      formData.append('staff_about', document.getElementById('staffAboutText').value.trim());
+      const { formData, values } = getStaffProfileFormData();
 
       try {
         const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`, {
@@ -1092,17 +1423,116 @@
           return;
         }
 
-        if (data.first_name || data.last_name) {
-          const fullName = [data.first_name || '', data.last_name || ''].filter(Boolean).join(' ');
+        const responseProfile = {
+          first_name: data.first_name || values.first_name,
+          last_name: data.last_name || values.last_name,
+          phone_number: data.phone_number || values.phone_number,
+          address: data.address || values.address,
+          department: data.department || values.department,
+          skills: data.skills || values.skills,
+          staff_about: data.staff_about || values.staff_about
+        };
+
+        renderStaffProfileRecord(responseProfile);
+        syncProfileInputs(responseProfile);
+
+        if (responseProfile.first_name || responseProfile.last_name) {
+          const fullName = [responseProfile.first_name, responseProfile.last_name].filter(Boolean).join(' ');
           if (fullName) {
             document.getElementById('staff-name').textContent = fullName;
           }
         }
 
-        alert('Staff profile info updated successfully.');
+        alert('Staff profile info uploaded successfully.');
       } catch (error) {
         alert('Error updating staff profile info.');
       }
+    }
+
+    function openProfileUpdatePopup() {
+      const currentProfile = {
+        first_name: document.getElementById('staffFirstName').value,
+        last_name: document.getElementById('staffLastName').value,
+        phone_number: document.getElementById('staffPhoneNumber').value,
+        address: document.getElementById('staffAddress').value,
+        department: document.getElementById('staffDepartment').value,
+        skills: document.getElementById('staffSkills').value,
+        staff_about: document.getElementById('staffAboutText').value
+      };
+
+      document.getElementById('popupFirstName').value = currentProfile.first_name;
+      document.getElementById('popupLastName').value = currentProfile.last_name;
+      document.getElementById('popupPhoneNumber').value = currentProfile.phone_number;
+      document.getElementById('popupAddress').value = currentProfile.address;
+      document.getElementById('popupDepartment').value = currentProfile.department;
+      document.getElementById('popupSkills').value = currentProfile.skills;
+      document.getElementById('popupAboutText').value = currentProfile.staff_about;
+
+      document.getElementById('profileUpdatePopup').classList.add('visible');
+    }
+
+    function closeProfileUpdatePopup(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      document.getElementById('profileUpdatePopup').classList.remove('visible');
+    }
+
+    async function submitProfileUpdate() {
+      if (!staffUserId) {
+        alert('Staff user is not signed in.');
+        return;
+      }
+
+      const { formData, values } = getStaffProfileFormData('popup');
+
+      try {
+        const res = await fetch(`${API_URL}/staff-profile/${encodeURIComponent(staffUserId)}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        const responseProfile = {
+          first_name: data.first_name || values.first_name,
+          last_name: data.last_name || values.last_name,
+          phone_number: data.phone_number || values.phone_number,
+          address: data.address || values.address,
+          department: data.department || values.department,
+          skills: data.skills || values.skills,
+          staff_about: data.staff_about || values.staff_about
+        };
+
+        renderStaffProfileRecord(responseProfile);
+        syncProfileInputs(responseProfile);
+        closeProfileUpdatePopup();
+
+        if (responseProfile.first_name || responseProfile.last_name) {
+          const fullName = [responseProfile.first_name, responseProfile.last_name].filter(Boolean).join(' ');
+          if (fullName) {
+            document.getElementById('staff-name').textContent = fullName;
+          }
+        }
+
+        alert('Staff profile details updated successfully.');
+      } catch (error) {
+        alert('Error saving updated profile details.');
+      }
+    }
+
+    function syncProfileInputs(profile) {
+      document.getElementById('staffFirstName').value = profile.first_name || '';
+      document.getElementById('staffLastName').value = profile.last_name || '';
+      document.getElementById('staffPhoneNumber').value = profile.phone_number || '';
+      document.getElementById('staffAddress').value = profile.address || '';
+      document.getElementById('staffDepartment').value = profile.department || '';
+      document.getElementById('staffSkills').value = profile.skills || '';
+      document.getElementById('staffAboutText').value = profile.staff_about || '';
     }
 
     async function deleteStaffProfileInfo() {
@@ -1132,6 +1562,15 @@
         }
 
         document.getElementById('staffAboutText').value = '';
+        renderStaffProfileRecord({
+          first_name: document.getElementById('staffFirstName').value,
+          last_name: document.getElementById('staffLastName').value,
+          phone_number: document.getElementById('staffPhoneNumber').value,
+          address: document.getElementById('staffAddress').value,
+          department: document.getElementById('staffDepartment').value,
+          skills: document.getElementById('staffSkills').value,
+          staff_about: ''
+        });
         alert('Staff about info deleted successfully.');
       } catch (error) {
         alert('Error deleting staff profile info.');
@@ -1166,6 +1605,8 @@
         document.getElementById('staffDepartment').value = profile.department || '';
         document.getElementById('staffSkills').value = profile.skills || '';
 
+        renderStaffProfileRecord(profile);
+
         const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
         if (fullName) {
           document.getElementById('staff-name').textContent = fullName;
@@ -1173,6 +1614,24 @@
       } catch (error) {
         console.error('Error loading staff profile:', error);
       }
+    }
+
+    function renderStaffProfileRecord(profile) {
+      document.getElementById('recordFirstName').textContent = profile.first_name || '-';
+      document.getElementById('recordLastName').textContent = profile.last_name || '-';
+      document.getElementById('recordPhoneNumber').textContent = profile.phone_number || '-';
+      document.getElementById('recordDepartment').textContent = profile.department || '-';
+      document.getElementById('recordAddress').textContent = profile.address || '-';
+      document.getElementById('recordSkills').textContent = profile.skills || '-';
+      document.getElementById('recordAbout').textContent = profile.staff_about || '-';
+
+      const fullName = [profile.first_name || '', profile.last_name || ''].filter(Boolean).join(' ');
+      document.getElementById('reviewFullName').textContent = fullName || '-';
+      document.getElementById('reviewPhone').textContent = profile.phone_number || '-';
+      document.getElementById('reviewDepartment').textContent = profile.department || '-';
+      document.getElementById('reviewSkills').textContent = profile.skills || '-';
+      document.getElementById('reviewAddress').textContent = profile.address || '-';
+      document.getElementById('reviewAbout').textContent = profile.staff_about || '-';
     }
 
     function openAvatarPopup(type) {
