@@ -69,6 +69,9 @@ def init_db():
         "assigned_staff": "TEXT",
         "created_at": "TEXT",
         "completion_media": "TEXT",
+        "completion_confirmed": "INTEGER DEFAULT 0",
+        "completion_submitted_by": "INTEGER",
+        "completion_submitted_at": "TEXT",
     }
 
     for column_name, column_type in ad_columns.items():

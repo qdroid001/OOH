@@ -153,6 +153,26 @@
       font-size: 32px;
     }
     
+    .refresh-btn {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .refresh-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(67, 97, 238, 0.12);
+    }
+
     .stats-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -505,6 +525,22 @@
       padding-top: 16px;
       border-top: 1px solid var(--gray-light);
     }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .evidence-grid img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--gray-light);
+      background: #f8fafc;
+    }
     
     .table-container {
       background: white;
@@ -734,6 +770,10 @@
           <i class="fas fa-history"></i>
           <span>My Work</span>
         </a>
+        <a href="#" onclick="showSection('evidence', this)">
+          <i class="fas fa-images"></i>
+          <span>Work Done Evidence</span>
+        </a>
         <a href="#" onclick="showSection('about', this)">
           <i class="fas fa-info-circle"></i>
           <span>About</span>
@@ -751,6 +791,10 @@
       <div id="dashboard" class="page-section active">
         <div class="page-header">
           <h1 class="page-title">Client Dashboard</h1>
+          <button type="button" class="refresh-btn" onclick="refreshClientPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
         </div>
         
         <div class="stats-container">
@@ -884,6 +928,10 @@
       <div id="history" class="page-section">
         <div class="page-header">
           <h1 class="page-title">My Campaign History</h1>
+          <button type="button" class="refresh-btn" onclick="refreshClientPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
         </div>
         
         <h2 style="margin-bottom: 20px;">Active Campaigns</h2>
@@ -930,10 +978,40 @@
         </div>
       </div>
 
+      <div id="evidence" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">Work Done Evidence</h1>
+          <button type="button" class="refresh-btn" onclick="refreshClientPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+        <div class="table-container">
+          <table id="client-evidence-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Company</th>
+                <th>Product</th>
+                <th>Ad Type</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- About Section -->
       <div id="about" class="page-section">
         <div class="page-header">
           <h1 class="page-title">About Abiok Publicity</h1>
+          <button type="button" class="refresh-btn" onclick="refreshClientPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
         </div>
         
         <div class="about-container">
@@ -1015,6 +1093,18 @@
     </div>
   </div>
 
+  <div id="evidenceReviewModal" class="company-about-modal" onclick="closeEvidenceReview(event)">
+    <div class="company-about-card" onclick="event.stopPropagation()">
+      <div class="company-about-header">
+        <h3>Work Done Evidence</h3>
+        <button type="button" class="company-about-close" onclick="closeEvidenceReview()">×</button>
+      </div>
+      <div class="company-about-body">
+        <div id="evidenceReviewGrid" class="evidence-grid"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = "http://127.0.0.1:5000";
     const userId = localStorage.getItem("user_id");
@@ -1030,7 +1120,7 @@
       const total = ads.length;
       const active = ads.filter(ad => ad.status === 'processing' || ad.status === 'accepted').length;
       const pending = ads.filter(ad => ad.status === 'pending').length;
-      const completed = ads.filter(ad => ad.status === 'done').length;
+      const completed = ads.filter(ad => ad.status === 'done' || ad.status === 'completed').length;
       
       document.getElementById('total-campaigns').textContent = total;
       document.getElementById('active-campaigns').textContent = active;
@@ -1044,12 +1134,19 @@
       document.getElementById(sectionId).classList.add("active");
       document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
       if (element.tagName === "A") element.classList.add("active");
+      if (sectionId === 'evidence') {
+        loadClientEvidence();
+      }
     }
 
     // Logout
     function logout(){
       localStorage.clear();
       window.location.href = "/";
+    }
+
+    function refreshClientPanel() {
+      window.location.reload();
     }
 
     function renderCompanyCard(company) {
@@ -1226,7 +1323,7 @@
               <td><span class="status-badge ${statusClass}">${ad.status}</span></td>
             </tr>
           `;
-          if (ad.status === "done") {
+          if (ad.status === "done" || ad.status === "completed") {
             completedTbody.innerHTML += row;
           } else {
             tbody.innerHTML += row;
@@ -1238,6 +1335,54 @@
         tbody.innerHTML = `<tr><td colspan='10' style='text-align: center; padding: 20px; color: var(--danger);'>Error loading campaigns. Please try again.</td></tr>`;
         updateStats([]);
       }
+    }
+
+    async function loadClientEvidence() {
+      const tbody = document.querySelector("#client-evidence-table tbody");
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Loading evidence...</td></tr>`;
+      try {
+        const res = await fetch(`${API_URL}/work-done-evidence?role=client&user_id=${encodeURIComponent(userId)}`);
+        const evidence = await res.json();
+        if (!Array.isArray(evidence) || evidence.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No confirmed work done evidence yet.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = "";
+        evidence.forEach(item => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.company_name || "-"}</td>
+            <td>${item.product_name || "-"}</td>
+            <td>${item.ad_type || "-"}</td>
+            <td>${item.location || "-"}</td>
+            <td><span class="status-badge status-done">Confirmed</span></td>
+            <td><button type="button" class="company-action-btn about" onclick='openEvidenceImages(${JSON.stringify(item.completion_media)})'>Review</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--danger);">Error loading evidence.</td></tr>`;
+      }
+    }
+
+    function openEvidenceImages(images) {
+      const grid = document.getElementById("evidenceReviewGrid");
+      grid.innerHTML = "";
+      (images || []).forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Work done evidence";
+        grid.appendChild(img);
+      });
+      document.getElementById("evidenceReviewModal").classList.add("visible");
+    }
+
+    function closeEvidenceReview(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      document.getElementById("evidenceReviewModal").classList.remove("visible");
     }
 
     // Initialize the dashboard

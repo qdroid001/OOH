@@ -298,6 +298,26 @@
       font-size: 32px;
     }
     
+    .refresh-btn {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .refresh-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(139, 92, 246, 0.12);
+    }
+
     .stats-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -851,6 +871,22 @@
       border-radius: 8px;
       background: #e2e8f0;
     }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .evidence-grid img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--gray-light);
+      background: #f8fafc;
+    }
     
     /* Responsive Design */
     @media (max-width: 1024px) {
@@ -978,6 +1014,10 @@
             <i class="fas fa-user-circle"></i>
             <span>Profile</span>
           </a>
+          <a href="#" id="evidence-link" onclick="showPage('evidence')">
+            <i class="fas fa-images"></i>
+            <span>Work Done Evidence</span>
+          </a>
           <a href="#" id="about-link" onclick="showPage('about')">
             <i class="fas fa-info-circle"></i>
             <span>About</span>
@@ -997,6 +1037,10 @@
       <div id="dashboard" class="page active">
         <div class="header">
           <h1>Staff Dashboard</h1>
+          <button type="button" class="refresh-btn" onclick="refreshStaffPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
         </div>
         
         <div class="stats-container">
@@ -1069,6 +1113,10 @@
       <div id="profile" class="page">
         <div class="header">
           <h1>My Profile</h1>
+          <button type="button" class="refresh-btn" onclick="refreshStaffPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
         </div>
         <div class="profile-shell">
           <div class="profile-card">
@@ -1157,6 +1205,33 @@
           </div>
         </div>
       </div>
+
+      <div id="evidence" class="page">
+        <div class="header">
+          <h1>Work Done Evidence</h1>
+          <button type="button" class="refresh-btn" onclick="refreshStaffPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+        <div class="table-container">
+          <table id="staff-evidence-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Company</th>
+                <th>Product</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
       <div id="profileUpdatePopup" class="modal-popup" onclick="closeProfileUpdatePopup(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
           <div class="modal-header">
@@ -1186,10 +1261,44 @@
         </div>
       </div>
 
+      <div id="evidenceUploadPopup" class="modal-popup" onclick="closeEvidenceUploadPopup(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Upload Work Done Evidence</h3>
+            <button type="button" class="avatar-popup-close" onclick="closeEvidenceUploadPopup()">×</button>
+          </div>
+          <div class="modal-body">
+            <label for="workEvidenceImages">Image Evidence</label>
+            <input type="file" id="workEvidenceImages" accept="image/png,image/jpeg,image/gif,image/webp" multiple>
+            <div id="workEvidencePreview" class="evidence-grid"></div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="secondary" onclick="reviewEvidenceImages()">Review Images</button>
+            <button type="button" class="primary" onclick="uploadWorkEvidence()">Upload Images</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="evidenceReviewPopup" class="modal-popup" onclick="closeEvidenceReview(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+          <div class="modal-header">
+            <h3 id="evidenceReviewTitle">Evidence Images</h3>
+            <button type="button" class="avatar-popup-close" onclick="closeEvidenceReview()">×</button>
+          </div>
+          <div class="modal-body">
+            <div id="evidenceReviewGrid" class="evidence-grid"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- About Page -->
       <div id="about" class="page">
         <div class="header">
           <h1>Company Information</h1>
+          <button type="button" class="refresh-btn" onclick="refreshStaffPanel()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
         </div>
         
         <div class="about-container">
@@ -1225,6 +1334,8 @@
     const staffCompanyId = localStorage.getItem("company_id");
     let staffProfilePic = localStorage.getItem("profile_pic");
     let avatarPopupMode = null;
+    let evidenceAdId = null;
+    let selectedEvidenceFiles = [];
     
     // Set staff name and avatar in the sidebar
     document.getElementById("staff-name").textContent = staffUsername;
@@ -1240,7 +1351,7 @@
     function updateStats(ads) {
       const pending = ads.filter(ad => ad.status === 'pending').length;
       const processing = ads.filter(ad => ad.status === 'processing' || ad.status === 'accepted').length;
-      const completed = ads.filter(ad => ad.status === 'done').length;
+      const completed = ads.filter(ad => ad.status === 'done' || ad.status === 'completed').length;
       const declined = ads.filter(ad => ad.status === 'declined').length;
       
       document.getElementById('pending-count').textContent = pending;
@@ -1260,6 +1371,8 @@
 
       if (pageId === 'about') {
         loadCompanyProfile();
+      } else if (pageId === 'evidence') {
+        loadStaffEvidence();
       }
     }
 
@@ -1596,6 +1709,7 @@
           staffProfilePic = profile.profile_pic;
           localStorage.setItem('profile_pic', profile.profile_pic);
         }
+        localStorage.setItem('is_prime_staff', profile.is_prime_staff ? '1' : '0');
 
         document.getElementById('staffAboutText').value = profile.staff_about || '';
         document.getElementById('staffFirstName').value = profile.first_name || '';
@@ -1729,6 +1843,10 @@
       window.location.href = "/";
     }
 
+    function refreshStaffPanel() {
+      window.location.reload();
+    }
+
     // Fetch advertisements assigned to this staff
     async function fetchAds() {
       try {
@@ -1792,6 +1910,10 @@
     // Update ad status
     async function updateStatus(id, status) {
       if (!status) return;
+      if (status === "done") {
+        openEvidenceUploadPopup(id);
+        return;
+      }
       try {
         const res = await fetch(`${API_URL}/update-status/${id}`, {
           method: "PUT",
@@ -1814,6 +1936,117 @@
       } catch (err) {
         console.error("Error updating status:", err);
       }
+    }
+
+    function openEvidenceUploadPopup(adId) {
+      evidenceAdId = adId;
+      selectedEvidenceFiles = [];
+      document.getElementById('workEvidenceImages').value = '';
+      document.getElementById('workEvidencePreview').innerHTML = '';
+      document.getElementById('evidenceUploadPopup').classList.add('visible');
+    }
+
+    function closeEvidenceUploadPopup(event) {
+      if (event) event.stopPropagation();
+      document.getElementById('evidenceUploadPopup').classList.remove('visible');
+      fetchAds();
+    }
+
+    document.getElementById('workEvidenceImages').addEventListener('change', function(event) {
+      selectedEvidenceFiles = selectedEvidenceFiles.concat(Array.from(event.target.files || []));
+      renderEvidencePreview(selectedEvidenceFiles, 'workEvidencePreview');
+      event.target.value = '';
+    });
+
+    function renderEvidencePreview(filesOrUrls, targetId) {
+      const grid = document.getElementById(targetId);
+      grid.innerHTML = '';
+      filesOrUrls.forEach(item => {
+        const img = document.createElement('img');
+        img.src = typeof item === 'string' ? item : URL.createObjectURL(item);
+        img.alt = 'Work done evidence';
+        grid.appendChild(img);
+      });
+    }
+
+    function reviewEvidenceImages() {
+      if (!selectedEvidenceFiles.length) {
+        alert('Please choose at least one image first.');
+        return;
+      }
+      document.getElementById('evidenceReviewTitle').textContent = 'Selected Evidence Images';
+      renderEvidencePreview(selectedEvidenceFiles, 'evidenceReviewGrid');
+      document.getElementById('evidenceReviewPopup').classList.add('visible');
+    }
+
+    function closeEvidenceReview(event) {
+      if (event) event.stopPropagation();
+      document.getElementById('evidenceReviewPopup').classList.remove('visible');
+    }
+
+    async function uploadWorkEvidence() {
+      if (!evidenceAdId || !staffUserId) return;
+      if (!selectedEvidenceFiles.length) {
+        alert('Please choose at least one image evidence.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('staff_id', staffUserId);
+      selectedEvidenceFiles.forEach(file => formData.append('work_images', file));
+
+      try {
+        const res = await fetch(`${API_URL}/submit-completion/${evidenceAdId}`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        alert(data.completion_confirmed ? 'Evidence uploaded and sent to company and client.' : 'Evidence uploaded and sent to company for confirmation.');
+        closeEvidenceUploadPopup();
+        loadStaffEvidence();
+      } catch (error) {
+        alert('Error uploading work done evidence.');
+      }
+    }
+
+    async function loadStaffEvidence() {
+      const tbody = document.querySelector('#staff-evidence-table tbody');
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Loading evidence...</td></tr>`;
+      try {
+        const res = await fetch(`${API_URL}/work-done-evidence?role=staff&user_id=${encodeURIComponent(staffUserId)}`);
+        const evidence = await res.json();
+        if (!Array.isArray(evidence) || evidence.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No work done evidence uploaded yet.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = '';
+        evidence.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.client_name || '-'}</td>
+            <td>${item.company_name || '-'}</td>
+            <td>${item.product_name || '-'}</td>
+            <td>${item.ad_type || '-'}</td>
+            <td>${item.location || '-'}</td>
+            <td>${item.completion_confirmed ? 'Confirmed' : 'Awaiting company confirmation'}</td>
+            <td><button class="save-btn" onclick='openEvidenceImages(${JSON.stringify(item.completion_media)})'>Review</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--danger);">Error loading evidence.</td></tr>`;
+      }
+    }
+
+    function openEvidenceImages(images) {
+      document.getElementById('evidenceReviewTitle').textContent = 'Work Done Evidence';
+      renderEvidencePreview(images || [], 'evidenceReviewGrid');
+      document.getElementById('evidenceReviewPopup').classList.add('visible');
     }
 
     // Load ads automatically

@@ -379,6 +379,9 @@ def update_status(ad_id):
         if not allowed_staff:
             conn.close()
             return jsonify({"error": "Only the assigned staff can update this campaign"}), 403
+        if status in ("done", "completed"):
+            conn.close()
+            return jsonify({"error": "Please upload work done evidence to mark this campaign done"}), 400
 
     cursor.execute(
         "UPDATE advertisements SET status=? WHERE id=?",

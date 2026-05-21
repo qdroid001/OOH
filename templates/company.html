@@ -634,6 +634,60 @@
       border-radius: 8px;
       background: rgba(2, 6, 23, 0.7);
     }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .evidence-grid img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .modal-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-popup.visible {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(640px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #0f172a;
+      color: var(--light);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .modal-header,
+    .modal-body {
+      padding: 18px 22px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
     
     /* Responsive Design */
     @media (max-width: 1024px) {
@@ -768,6 +822,10 @@
           <i class="fas fa-user-check"></i>
           <span>Active Staff</span>
         </a>
+        <a href="#" id="evidenceLink">
+          <i class="fas fa-images"></i>
+          <span>Work Done Evidence</span>
+        </a>
         <a href="#" id="aboutLink">
           <i class="fas fa-info-circle"></i>
           <span>About</span>
@@ -787,7 +845,7 @@
         <div class="header">
           <h1>Advertisement Management System - Company Dashboard</h1>
           <div class="header-actions">
-            <div class="header-action-btn" onclick="fetchAds()">
+            <div class="header-action-btn" onclick="refreshCompanyPanel()">
               <i class="fas fa-sync-alt"></i>
               <span>Refresh</span>
             </div>
@@ -902,6 +960,12 @@
       <div id="myStaff" style="display:none;">
         <div class="header">
           <h1>My Staff</h1>
+          <div class="header-actions">
+            <div class="header-action-btn" onclick="refreshCompanyPanel()">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </div>
+          </div>
         </div>
         <div class="table-container">
           <table id="staff-table">
@@ -926,6 +990,12 @@
       <div id="activeStaff" style="display:none;">
         <div class="header">
           <h1>Active Staff</h1>
+          <div class="header-actions">
+            <div class="header-action-btn" onclick="refreshCompanyPanel()">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </div>
+          </div>
         </div>
         <div class="table-container">
           <table id="active-staff-table">
@@ -943,9 +1013,44 @@
         </div>
       </div>
 
+      <div id="evidence" style="display:none;">
+        <div class="header">
+          <h1>Work Done Evidence</h1>
+          <div class="header-actions">
+            <div class="header-action-btn" onclick="refreshCompanyPanel()">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table id="company-evidence-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Product</th>
+                <th>Ad Type</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Review</th>
+                <th>Confirm</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
       <div id="about">
         <div class="header">
           <h1>Company Profile</h1>
+          <div class="header-actions">
+            <div class="header-action-btn" onclick="refreshCompanyPanel()">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </div>
+          </div>
         </div>
 
         <div class="prime-staff-panel">
@@ -981,6 +1086,18 @@
     </div>
   </div>
 
+  <div id="evidenceReviewPopup" class="modal-popup" onclick="closeEvidenceReview(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Work Done Evidence</h3>
+        <button type="button" class="avatar-popup-close" onclick="closeEvidenceReview()">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="evidenceReviewGrid" class="evidence-grid"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = "http://127.0.0.1:5000";
     let staffList = [];
@@ -1002,6 +1119,10 @@
       e.preventDefault();
       showPage('activeStaff');
     });
+    document.getElementById('evidenceLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      showPage('evidence');
+    });
     
     document.getElementById('aboutLink').addEventListener('click', function(e) {
       e.preventDefault();
@@ -1009,7 +1130,7 @@
     });
 
     function showPage(pageId) {
-      const pageIds = ['dashboard', 'myStaff', 'activeStaff', 'about'];
+      const pageIds = ['dashboard', 'myStaff', 'activeStaff', 'evidence', 'about'];
       pageIds.forEach(id => {
         const page = document.getElementById(id);
         if (page) page.style.display = id === pageId ? 'block' : 'none';
@@ -1021,6 +1142,8 @@
 
       if (pageId === 'myStaff') renderMyStaff();
       if (pageId === 'activeStaff') renderActiveStaff();
+      if (pageId === 'evidence') loadCompanyEvidence();
+      if (pageId === 'about') loadCompanyProfileContent();
     }
 
     function loadCompanyProfile() {
@@ -1565,6 +1688,75 @@
         }
       } catch (error) {
         console.error("Error updating status:", error);
+      }
+    }
+
+    async function loadCompanyEvidence() {
+      const tbody = document.querySelector('#company-evidence-table tbody');
+      tbody.innerHTML = '<tr><td colspan="8">Loading evidence...</td></tr>';
+      try {
+        const res = await fetch(`${API_URL}/work-done-evidence?role=company&user_id=${encodeURIComponent(companyId)}`);
+        const evidence = await res.json();
+        if (!Array.isArray(evidence) || evidence.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8">No work done evidence has been submitted yet.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = '';
+        evidence.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.client_name || '-'}</td>
+            <td>${item.product_name || '-'}</td>
+            <td>${item.ad_type || '-'}</td>
+            <td>${item.location || '-'}</td>
+            <td>${item.completion_confirmed ? 'Confirmed' : 'Awaiting confirmation'}</td>
+            <td><button class="header-action-btn" onclick='openEvidenceImages(${JSON.stringify(item.completion_media)})'>Review</button></td>
+            <td>${item.completion_confirmed ? 'Sent to client' : `<button class="header-action-btn" onclick="confirmEvidence(${item.id})">Confirm</button>`}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="8">Error loading evidence.</td></tr>';
+      }
+    }
+
+    function refreshCompanyPanel() {
+      window.location.reload();
+    }
+
+    function openEvidenceImages(images) {
+      const grid = document.getElementById('evidenceReviewGrid');
+      grid.innerHTML = '';
+      (images || []).forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Work done evidence';
+        grid.appendChild(img);
+      });
+      document.getElementById('evidenceReviewPopup').classList.add('visible');
+    }
+
+    function closeEvidenceReview(event) {
+      if (event) event.stopPropagation();
+      document.getElementById('evidenceReviewPopup').classList.remove('visible');
+    }
+
+    async function confirmEvidence(adId) {
+      try {
+        const res = await fetch(`${API_URL}/confirm-completion/${adId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ company_id: parseInt(companyId) })
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+        if (!data.error) {
+          loadCompanyEvidence();
+          fetchAds();
+        }
+      } catch (error) {
+        alert('Error confirming work done evidence.');
       }
     }
 
